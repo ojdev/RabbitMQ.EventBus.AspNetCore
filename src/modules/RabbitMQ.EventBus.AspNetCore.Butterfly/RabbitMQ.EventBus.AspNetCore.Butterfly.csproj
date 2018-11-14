@@ -12,7 +12,7 @@
     <RepositoryType>github</RepositoryType>
     <PackageTags>rqbbitmq,dnc,eventbus,butterfly</PackageTags>
     <Description>RabbitMQ.EventBus.AspNetCore.Butterfly</Description>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
