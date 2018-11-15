@@ -1,9 +1,11 @@
 # RabbitMQ.EventBus.AspNetCore
-[![Build status](https://ci.appveyor.com/api/projects/status/i4ihb5lhirj5l932?svg=true)](https://ci.appveyor.com/project/ojdev/rabbitmq-eventbus-aspnetcore)
-[![NuGet version](https://badge.fury.io/nu/RabbitMQ.EventBus.AspNetCore.svg)](https://badge.fury.io/nu/RabbitMQ.EventBus.AspNetCore)
+
+[![AppVeyor](https://img.shields.io/appveyor/ci/ojdev/rabbitmq-eventbus-aspnetcore.svg?style=popout)](https://ci.appveyor.com/project/ojdev/rabbitmq-eventbus-aspnetcore)
+[![NuGet](https://img.shields.io/nuget/v/RabbitMQ.EventBus.AspNetCore.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore)
 [![GitHub license](https://img.shields.io/github/license/ojdev/RabbitMQ.EventBus.AspNetCore.svg)](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/blob/master/LICENSE)
 
 
 ## Modules
 ### RabbitMQ.EventBus.AspNetCore.Butterfly
-[![NuGet version](https://badge.fury.io/nu/RabbitMQ.EventBus.AspNetCore.Butterfly.svg)](https://badge.fury.io/nu/RabbitMQ.EventBus.AspNetCore.Butterfly)
+
+[![NuGet](https://img.shields.io/nuget/v/RabbitMQ.EventBus.AspNetCore.Butterfly.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore.Butterfly)
