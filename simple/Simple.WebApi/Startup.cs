@@ -28,7 +28,7 @@ namespace Simple.WebApi
              {
                  eventBusOption.ClientProvidedAssembly(assemblyName);
                  eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
-                 eventBusOption.RetryOnConsumeFailure(TimeSpan.FromSeconds(1));
+                 eventBusOption.RetryOnFailure(TimeSpan.FromSeconds(1));
              });
             services.AddButterfly(butterfly =>
             {
