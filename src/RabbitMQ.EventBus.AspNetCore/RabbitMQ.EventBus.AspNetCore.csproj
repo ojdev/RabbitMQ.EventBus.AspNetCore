@@ -12,6 +12,7 @@
     <Description>asp.net core 下使用的RabbitMQ</Description>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ojdev/RabbitMQ.EventBus.AspNetCore/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore</PackageProjectUrl>
+    <Version>1.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -23,7 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Polly" Version="6.1.0" />
+    <PackageReference Include="Polly" Version="6.1.1" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
   </ItemGroup>
 
