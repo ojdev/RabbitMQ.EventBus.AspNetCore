@@ -56,7 +56,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     _persistentConnection.TryConnect();
                 }
                 _publishChannel = _persistentConnection.ExchangeDeclare(exchange, type: type);
-                _publishChannel.BasicReturn += async (se, ex) => await Task.Delay(1000).ContinueWith(t => Publish(ex.Body, ex.Exchange, ex.RoutingKey));
+                _publishChannel.BasicReturn += async (se, ex) => await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(t => Publish(ex.Body, ex.Exchange, ex.RoutingKey));
             }
             IBasicProperties properties = _publishChannel.CreateBasicProperties();
             properties.DeliveryMode = 2; // persistent
