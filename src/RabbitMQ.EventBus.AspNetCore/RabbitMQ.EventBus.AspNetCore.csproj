@@ -12,6 +12,7 @@
     <Description>asp.net core 下使用的RabbitMQ</Description>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ojdev/RabbitMQ.EventBus.AspNetCore/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore</PackageProjectUrl>
+    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
