@@ -58,12 +58,18 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void RabbitMQEventBusAutoSubscribe(this IApplicationBuilder app)
         {
             IRabbitMQEventBus eventBus = app.ApplicationServices.GetRequiredService<IRabbitMQEventBus>();
-            foreach (Type mType in typeof(IEvent).GetAssemblies())
+            ILogger<IRabbitMQEventBus> logger = app.ApplicationServices.GetRequiredService<ILogger<IRabbitMQEventBus>>();
+            using (logger.BeginScope("EventBus Subscribe"))
             {
-                foreach (Type hType in typeof(IEventHandler<>).GetMakeGenericType(mType))
+                foreach (Type mType in typeof(IEvent).GetAssemblies())
                 {
-                    eventBus.Subscribe(mType, hType);
+                    foreach (Type hType in typeof(IEventHandler<>).GetMakeGenericType(mType))
+                    {
+                        logger.LogInformation($"{mType.Name}=>{hType.Name}");
+                        eventBus.Subscribe(mType, hType);
+                    }
                 }
+                logger.LogInformation($"Ok.");
             }
         }
         /// <summary>
