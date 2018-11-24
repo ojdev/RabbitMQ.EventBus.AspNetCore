@@ -184,7 +184,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                 };
                 channel.CallbackException += (sender, ex) =>
                 {
-
+                    _logger.LogError(new EventId(ex.Exception.HResult), ex.Exception, ex.Exception.Message);
                 };
                 channel.BasicConsume(queue: queue, autoAck: false, consumer: consumer);
             }
