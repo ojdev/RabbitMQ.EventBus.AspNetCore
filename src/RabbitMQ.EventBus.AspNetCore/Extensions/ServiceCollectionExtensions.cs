@@ -63,6 +63,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 foreach (Type mType in typeof(IEvent).GetAssemblies())
                 {
+                    logger.LogInformation($"{mType.Name}");
                     foreach (Type hType in typeof(IEventHandler<>).GetMakeGenericType(mType))
                     {
                         logger.LogInformation($"{mType.Name}=>{hType.Name}");
