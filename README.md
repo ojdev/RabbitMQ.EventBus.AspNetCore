@@ -12,4 +12,4 @@
 
 |Name|Package|NuGet|Status|Document|
 |:------|:------|:-----|:-----|:-----|
-|Butterfly|RabbitMQ.EventBus.AspNetCore.Butterfly|[![NuGet](https://img.shields.io/nuget/v/RabbitMQ.EventBus.AspNetCore.Butterfly.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore.Butterfly)|[![NuGet](https://img.shields.io/nuget/dt/RabbitMQ.EventBus.AspNetCore.Butterfly.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore.Butterfly)|[使用说明](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki/RabbitMQ.EventBus.AspNetCore.Butterfly)|
+|Butterfly|[RabbitMQ.EventBus.AspNetCore.Butterfly](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore.Butterfly)|[![NuGet](https://img.shields.io/nuget/v/RabbitMQ.EventBus.AspNetCore.Butterfly.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore.Butterfly)|[![NuGet](https://img.shields.io/nuget/dt/RabbitMQ.EventBus.AspNetCore.Butterfly.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore.Butterfly)|[使用说明](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki/RabbitMQ.EventBus.AspNetCore.Butterfly)|

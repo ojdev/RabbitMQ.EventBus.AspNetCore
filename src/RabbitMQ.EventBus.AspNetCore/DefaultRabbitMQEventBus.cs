@@ -49,6 +49,7 @@ namespace RabbitMQ.EventBus.AspNetCore
         /// <param name="type"></param>
         public void Publish<TMessage>(TMessage message, string exchange, string routingKey, string type = ExchangeType.Topic)
         {
+            string body = message.Serialize();
             if (_publishChannel?.IsOpen != true)
             {
                 if (_persistentConnection.IsConnected)
@@ -56,11 +57,10 @@ namespace RabbitMQ.EventBus.AspNetCore
                     _persistentConnection.TryConnect();
                 }
                 _publishChannel = _persistentConnection.ExchangeDeclare(exchange, type: type);
-                _publishChannel.BasicReturn += async (se, ex) => await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(t => Publish(ex.Body, ex.Exchange, ex.RoutingKey));
+                _publishChannel.BasicReturn += async (se, ex) => await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(t => Publish(body, ex.Exchange, ex.RoutingKey));
             }
             IBasicProperties properties = _publishChannel.CreateBasicProperties();
             properties.DeliveryMode = 2; // persistent
-            string body = message.Serialize();
             _publishChannel.BasicPublish(exchange: exchange,
                              routingKey: routingKey,
                              mandatory: true,
