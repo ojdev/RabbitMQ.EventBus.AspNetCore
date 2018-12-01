@@ -159,7 +159,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                 }
                 #endregion
                 channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
-                //channel.BasicQos(0, 1, false);
+                channel.BasicQos(1, 1, false);
                 EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
                 consumer.Received += async (model, ea) =>
                 {
