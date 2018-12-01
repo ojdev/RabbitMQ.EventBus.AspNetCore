@@ -159,7 +159,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                 }
                 #endregion
                 channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
-                channel.BasicQos(0, 1, false);
+                //channel.BasicQos(0, 1, false);
                 EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
                 consumer.Received += async (model, ea) =>
                 {
@@ -175,7 +175,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     {
                         _logger.LogError(new EventId(ex.HResult), ex, ex.Message);
                         //(int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds
-                        //await Task.Delay(1000).ContinueWith(p => channel.BasicNack(ea.DeliveryTag, false, true));
+                        await Task.Delay(200).ContinueWith(p => channel.BasicNack(ea.DeliveryTag, false, true));
                         channel.BasicNack(ea.DeliveryTag, false, true);
                     }
                     finally
