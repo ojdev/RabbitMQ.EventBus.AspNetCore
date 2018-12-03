@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace RabbitMQ.EventBus.AspNetCore.Configurations
 {
@@ -45,6 +46,14 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         public void RetryOnFailure(TimeSpan maxRetryDelay)
         {
             Configuration.ConsumerFailRetryInterval = maxRetryDelay;
+        }
+        /// <summary>
+        /// 设置日志级别
+        /// </summary>
+        /// <param name="level">日志级别</param>
+        public void AddLogging(LogLevel level)
+        {
+            ILoggerConfig.Level = level;
         }
     }
 }
