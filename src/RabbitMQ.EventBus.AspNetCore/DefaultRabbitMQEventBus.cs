@@ -174,8 +174,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     catch (Exception ex)
                     {
                         _logger.LogError(new EventId(ex.HResult), ex, ex.Message);
-                        //(int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds
-                        await Task.Delay(200).ContinueWith(p => channel.BasicNack(ea.DeliveryTag, false, true));
+                        await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(p => channel.BasicNack(ea.DeliveryTag, false, true));
                         channel.BasicNack(ea.DeliveryTag, false, true);
                     }
                     finally
