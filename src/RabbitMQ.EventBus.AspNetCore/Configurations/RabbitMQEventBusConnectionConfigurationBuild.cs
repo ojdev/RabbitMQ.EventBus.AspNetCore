@@ -42,7 +42,6 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         /// 重试错误的消息
         /// </summary>
         /// <param name="maxRetryDelay">消息失败的重试时间间隔（默认1秒）</param>
-        [Obsolete("由于可能造成阻塞，暂时停用")]
         public void RetryOnFailure(TimeSpan maxRetryDelay)
         {
             Configuration.ConsumerFailRetryInterval = maxRetryDelay;
