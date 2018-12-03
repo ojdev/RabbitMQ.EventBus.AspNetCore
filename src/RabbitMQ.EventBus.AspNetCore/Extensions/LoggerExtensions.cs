@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.Logging
     /// </summary>
     public static class LoggerExtensions
     {
-        private static readonly Action<ILogger, string, Exception> _informationRequested = null;
+        private static Action<ILogger, string, Exception> _informationRequested = null;
         static LoggerExtensions()
         {
         }
