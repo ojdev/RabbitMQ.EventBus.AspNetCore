@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.Logging
     /// </summary>
     public static class LoggerExtensions
     {
-        private static readonly Action<ILogger, string, Exception> _informationRequested = null;
+        private static Action<ILogger, string, Exception> _informationRequested = null;
         static LoggerExtensions()
         {
         }
@@ -30,7 +30,7 @@ namespace Microsoft.Extensions.Logging
         {
             if (_informationRequested == null)
             {
-                LoggerMessage.Define<string>(ILoggerConfig.Level, new EventId(1, nameof(Information)), "{LogContent}");
+                _informationRequested = LoggerMessage.Define<string>(ILoggerConfig.Level, new EventId(1, nameof(Information)), "{LogContent}");
             }
             _informationRequested(logger, LogContent, null);
         }
