@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.Logging
         private static readonly Action<ILogger, string, Exception> _informationRequested;
         static LoggerExtensions()
         {
-            _informationRequested = LoggerMessage.Define<string>(LogLevel.Information, new EventId(1, nameof(Information)), "{LogContent}");
+            _informationRequested = LoggerMessage.Define<string>(LogLevel.Warning, new EventId(1, nameof(Information)), "{LogContent}");
         }
         /// <summary>
         /// 
