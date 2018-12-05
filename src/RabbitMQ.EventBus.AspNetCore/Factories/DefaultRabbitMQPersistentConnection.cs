@@ -23,7 +23,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
 
 
         public string Endpoint => _connection?.Endpoint.ToString();
-        public DefaultRabbitMQPersistentConnection(RabbitMQEventBusConnectionConfiguration configuration,IConnectionFactory connectionFactory, ILogger<DefaultRabbitMQPersistentConnection> logger)
+        public DefaultRabbitMQPersistentConnection(RabbitMQEventBusConnectionConfiguration configuration, IConnectionFactory connectionFactory, ILogger<DefaultRabbitMQPersistentConnection> logger)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
@@ -64,7 +64,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
 
         public bool TryConnect()
         {
-            _logger.Information("RabbitMQ Client is trying to connect");
+            _logger.WriteLog(Configuration.Level, "RabbitMQ Client is trying to connect");
             lock (sync_root)
             {
                 RetryPolicy policy = RetryPolicy.Handle<SocketException>()
@@ -85,7 +85,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
                     _connection.ConnectionShutdown += OnConnectionShutdown;
                     _connection.CallbackException += OnCallbackException;
                     _connection.ConnectionBlocked += OnConnectionBlocked;
-                    _logger.Information($"RabbitMQ persistent connection acquired a connection {_connection.Endpoint.HostName} and is subscribed to failure events");
+                    _logger.WriteLog(Configuration.Level, $"RabbitMQ persistent connection acquired a connection {_connection.Endpoint.HostName} and is subscribed to failure events");
 
                     return true;
                 }
