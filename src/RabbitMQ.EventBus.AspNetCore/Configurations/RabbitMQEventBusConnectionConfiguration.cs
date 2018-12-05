@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace RabbitMQ.EventBus.AspNetCore.Configurations
 {
@@ -27,12 +28,16 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         /// 消息消费失败的重试时间间隔（默认1秒）
         /// </summary>
         public TimeSpan ConsumerFailRetryInterval { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public LogLevel Level { get; set; }
         /// <summary>
         /// 
         /// </summary>
         public RabbitMQEventBusConnectionConfiguration()
         {
+            Level = LogLevel.Information;
             FailReConnectRetryCount = 50;
             NetworkRecoveryInterval = TimeSpan.FromSeconds(5);
             AutomaticRecoveryEnabled = true;

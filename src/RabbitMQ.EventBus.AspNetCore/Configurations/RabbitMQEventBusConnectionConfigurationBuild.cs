@@ -52,7 +52,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         /// <param name="level">日志级别</param>
         public void LoggingWriteLevel(LogLevel level)
         {
-            ILoggerConfig.Level = level;
+            Configuration.Level = level;
         }
     }
 }
