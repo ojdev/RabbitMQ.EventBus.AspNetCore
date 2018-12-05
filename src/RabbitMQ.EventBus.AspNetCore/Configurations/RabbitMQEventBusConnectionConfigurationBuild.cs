@@ -47,10 +47,10 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
             Configuration.ConsumerFailRetryInterval = maxRetryDelay;
         }
         /// <summary>
-        /// 设置日志级别
+        /// 设置日志输出级别
         /// </summary>
         /// <param name="level">日志级别</param>
-        public void AddLogging(LogLevel level)
+        public void LoggingWriteLevel(LogLevel level)
         {
             ILoggerConfig.Level = level;
         }
