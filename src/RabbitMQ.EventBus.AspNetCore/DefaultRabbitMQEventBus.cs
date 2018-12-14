@@ -194,18 +194,18 @@ namespace RabbitMQ.EventBus.AspNetCore
             where TEvent : IEvent
             where TEventHandle : IEventHandler<TEvent>
         {
-            using (_serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
-                TEventHandle eventHandler = _serviceProvider.GetRequiredService<TEventHandle>();
+                TEventHandle eventHandler = scope.ServiceProvider.GetRequiredService<TEventHandle>();
                 TEvent integrationEvent = JsonConvert.DeserializeObject<TEvent>(body);
                 await eventHandler.Handle(integrationEvent);
             }
         }
         private async Task ProcessEvent(string body, Type eventType, Type eventHandleType)
         {
-            using (_serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
-                object eventHandler = _serviceProvider.GetRequiredService(eventHandleType);
+                object eventHandler = scope.ServiceProvider.GetRequiredService(eventHandleType);
                 if (eventHandler == null)
                 {
                     throw new InvalidOperationException(eventHandleType.Name);
