@@ -194,20 +194,26 @@ namespace RabbitMQ.EventBus.AspNetCore
             where TEvent : IEvent
             where TEventHandle : IEventHandler<TEvent>
         {
-            TEventHandle eventHandler = _serviceProvider.GetRequiredService<TEventHandle>();
-            TEvent integrationEvent = JsonConvert.DeserializeObject<TEvent>(body);
-            await eventHandler.Handle(integrationEvent);
+            using (_serviceProvider.CreateScope())
+            {
+                TEventHandle eventHandler = _serviceProvider.GetRequiredService<TEventHandle>();
+                TEvent integrationEvent = JsonConvert.DeserializeObject<TEvent>(body);
+                await eventHandler.Handle(integrationEvent);
+            }
         }
         private async Task ProcessEvent(string body, Type eventType, Type eventHandleType)
         {
-            object eventHandler = _serviceProvider.GetRequiredService(eventHandleType);
-            if (eventHandler == null)
+            using (_serviceProvider.CreateScope())
             {
-                throw new InvalidOperationException(eventHandleType.Name);
+                object eventHandler = _serviceProvider.GetRequiredService(eventHandleType);
+                if (eventHandler == null)
+                {
+                    throw new InvalidOperationException(eventHandleType.Name);
+                }
+                object integrationEvent = JsonConvert.DeserializeObject(body, eventType);
+                Type concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
+                await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(eventHandler, new object[] { integrationEvent });
             }
-            object integrationEvent = JsonConvert.DeserializeObject(body, eventType);
-            Type concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
-            await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(eventHandler, new object[] { integrationEvent });
         }
     }
 }

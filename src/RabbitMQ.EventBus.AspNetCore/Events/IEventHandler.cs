@@ -6,7 +6,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
     /// EventBus消息处理
     /// </summary>
     /// <typeparam name="TEvent"></typeparam>
-    public interface IEventHandler<TEvent>
+    public interface IEventHandler<TEvent> where TEvent : IEvent
     {
         /// <summary>
         /// 
