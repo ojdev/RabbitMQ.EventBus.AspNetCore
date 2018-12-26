@@ -8,7 +8,6 @@ using RabbitMQ.EventBus.AspNetCore.Events;
 using RabbitMQ.EventBus.AspNetCore.Factories;
 using RabbitMQ.EventBus.AspNetCore.Modules;
 using System;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -133,63 +132,73 @@ namespace RabbitMQ.EventBus.AspNetCore
 
         public void Subscribe(Type eventType, Type eventHandleType, string type = ExchangeType.Topic)
         {
-            object attribute = eventType.GetCustomAttributes(typeof(EventBusAttribute), true).FirstOrDefault();
-            if (attribute is EventBusAttribute attr)
+            var attributes = eventType.GetCustomAttributes(typeof(EventBusAttribute), true);
+            foreach (var attribute in attributes)
             {
-                string queue = attr.Queue ?? $"{ attr.Exchange }.{ eventType.Name }";
-                if (!_persistentConnection.IsConnected)
+                if (attribute is EventBusAttribute attr)
                 {
-                    _persistentConnection.TryConnect();
-                }
-                IModel channel;
-                #region snippet
-                try
-                {
-                    channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
-                    channel.QueueDeclarePassive(queue);
-                }
-                catch
-                {
-                    channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
-                    channel.QueueDeclare(queue: queue,
-                                         durable: true,
-                                         exclusive: false,
-                                         autoDelete: false,
-                                         arguments: null);
-                }
-                #endregion
-                channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
-                channel.BasicQos(0, 1, false);
-                EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
-                consumer.Received += async (model, ea) =>
-                {
-                    string body = Encoding.UTF8.GetString(ea.Body);
-                    bool isAck = false;
+                    string queue = attr.Queue ?? $"{ attr.Exchange }.{ eventType.Name }";
+                    if (!_persistentConnection.IsConnected)
+                    {
+                        _persistentConnection.TryConnect();
+                    }
+                    IModel channel;
+                    #region snippet
                     try
                     {
-                        await ProcessEvent(body, eventType, eventHandleType);
-                        channel.BasicAck(ea.DeliveryTag, multiple: false);
-                        isAck = true;
+                        channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
+                        channel.QueueDeclarePassive(queue);
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        _logger.LogError(new EventId(ex.HResult), ex, ex.Message);
-                        await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(p => channel.BasicNack(ea.DeliveryTag, false, true));
-                        channel.BasicNack(ea.DeliveryTag, false, true);
+                        channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
+                        channel.QueueDeclare(queue: queue,
+                                             durable: true,
+                                             exclusive: false,
+                                             autoDelete: false,
+                                             arguments: null);
                     }
-                    finally
+                    #endregion
+                    channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
+                    channel.BasicQos(0, 1, false);
+                    EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
+                    consumer.Received += async (model, ea) =>
                     {
-                        _eventHandlerFactory?.SubscribeEvent(new EventBusArgs(_persistentConnection.Endpoint, ea.Exchange, queue, attr.RoutingKey, type, _persistentConnection.Configuration.ClientProvidedName, body, isAck));
-                        _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{isAck}\t{ea.Exchange}\t{ea.RoutingKey}\t{body}");
-                    }
-                };
-                channel.CallbackException += (sender, ex) =>
-                {
-                    _logger.LogError(new EventId(ex.Exception.HResult), ex.Exception, ex.Exception.Message);
-                };
-                channel.BasicConsume(queue: queue, autoAck: false, consumer: consumer);
+                        string body = Encoding.UTF8.GetString(ea.Body);
+                        bool isAck = false;
+                        try
+                        {
+                            await ProcessEvent(body, eventType, eventHandleType, ea);
+                            channel.BasicAck(ea.DeliveryTag, multiple: false);
+                            isAck = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(new EventId(ex.HResult), ex, ex.Message);
+                            await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(p => channel.BasicNack(ea.DeliveryTag, false, true));
+                            channel.BasicNack(ea.DeliveryTag, false, true);
+                        }
+                        finally
+                        {
+                            _eventHandlerFactory?.SubscribeEvent(new EventBusArgs(_persistentConnection.Endpoint, ea.Exchange, queue, attr.RoutingKey, type, _persistentConnection.Configuration.ClientProvidedName, body, isAck));
+                            _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{isAck}\t{ea.Exchange}\t{ea.RoutingKey}\t{body}");
+                        }
+                    };
+                    channel.CallbackException += (sender, ex) =>
+                    {
+                        _logger.LogError(new EventId(ex.Exception.HResult), ex.Exception, ex.Exception.Message);
+                    };
+                    channel.BasicConsume(queue: queue, autoAck: false, consumer: consumer);
+                }
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TEvent"></typeparam>
+        /// <typeparam name="TEventHandle"></typeparam>
+        /// <param name="body"></param>
+        /// <returns></returns>
         private async Task ProcessEvent<TEvent, TEventHandle>(string body)
             where TEvent : IEvent
             where TEventHandle : IEventHandler<TEvent>
@@ -198,10 +207,18 @@ namespace RabbitMQ.EventBus.AspNetCore
             {
                 TEventHandle eventHandler = scope.ServiceProvider.GetRequiredService<TEventHandle>();
                 TEvent integrationEvent = JsonConvert.DeserializeObject<TEvent>(body);
-                await eventHandler.Handle(integrationEvent);
+                await eventHandler.Handle(integrationEvent/*, new MessageEventArgs(body, false)*/);
             }
         }
-        private async Task ProcessEvent(string body, Type eventType, Type eventHandleType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="eventType"></param>
+        /// <param name="eventHandleType"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private async Task ProcessEvent(string body, Type eventType, Type eventHandleType, BasicDeliverEventArgs args)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -212,7 +229,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                 }
                 object integrationEvent = JsonConvert.DeserializeObject(body, eventType);
                 Type concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
-                await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(eventHandler, new object[] { integrationEvent });
+                await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(eventHandler, new object[] { integrationEvent/*, new MessageEventArgs(body, args.Redelivered)*/ });
             }
         }
     }

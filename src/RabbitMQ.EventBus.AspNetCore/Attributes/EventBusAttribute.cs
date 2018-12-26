@@ -5,7 +5,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Attributes
     /// <summary>
     /// 
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class EventBusAttribute : Attribute
     {
         /// <summary>
