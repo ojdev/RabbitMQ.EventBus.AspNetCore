@@ -8,13 +8,15 @@ namespace RabbitMQ.EventBus.AspNetCore.Modules
     public sealed class RabbitMQEventBusModuleOption
     {
         private readonly IEventHandlerModuleFactory handlerFactory;
+        public IServiceProvider ApplicationServices;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="handlerFactory"></param>
-        public RabbitMQEventBusModuleOption(IEventHandlerModuleFactory handlerFactory)
+        public RabbitMQEventBusModuleOption(IEventHandlerModuleFactory handlerFactory, IServiceProvider applicationServices)
         {
             this.handlerFactory = handlerFactory ?? throw new ArgumentNullException(nameof(handlerFactory));
+            ApplicationServices = applicationServices;
         }
         /// <summary>
         /// 添加模块
