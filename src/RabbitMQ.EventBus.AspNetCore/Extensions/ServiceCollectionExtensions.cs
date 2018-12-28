@@ -37,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     NetworkRecoveryInterval = configuration.NetworkRecoveryInterval,
                     Uri = new Uri(connectionString),
                 };
-                var connection= new DefaultRabbitMQPersistentConnection(configuration, factory, logger);
+                var connection = new DefaultRabbitMQPersistentConnection(configuration, factory, logger);
                 connection.TryConnect();
                 return connection;
             });
@@ -82,7 +82,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void RabbitMQEventBusModule(this IApplicationBuilder app, Action<RabbitMQEventBusModuleOption> moduleOptions)
         {
             IEventHandlerModuleFactory factory = app.ApplicationServices.GetRequiredService<IEventHandlerModuleFactory>();
-            RabbitMQEventBusModuleOption moduleOption = new RabbitMQEventBusModuleOption(factory);
+            RabbitMQEventBusModuleOption moduleOption = new RabbitMQEventBusModuleOption(factory, app.ApplicationServices);
             moduleOptions?.Invoke(moduleOption);
         }
     }
