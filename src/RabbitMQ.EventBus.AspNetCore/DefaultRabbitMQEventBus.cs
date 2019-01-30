@@ -175,7 +175,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                         catch (Exception ex)
                         {
                             _logger.LogError(new EventId(ex.HResult), ex, ex.Message);
-                            await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(p => channel.BasicNack(ea.DeliveryTag, false, true));
+                            await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds);
                             channel.BasicNack(ea.DeliveryTag, false, true);
                         }
                         finally
@@ -199,17 +199,17 @@ namespace RabbitMQ.EventBus.AspNetCore
         /// <typeparam name="TEventHandle"></typeparam>
         /// <param name="body"></param>
         /// <returns></returns>
-        private async Task ProcessEvent<TEvent, TEventHandle>(string body)
-            where TEvent : IEvent
-            where TEventHandle : IEventHandler<TEvent>
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                TEventHandle eventHandler = scope.ServiceProvider.GetRequiredService<TEventHandle>();
-                TEvent integrationEvent = JsonConvert.DeserializeObject<TEvent>(body);
-                await eventHandler.Handle(integrationEvent/*, new MessageEventArgs(body, false)*/);
-            }
-        }
+        //private async Task ProcessEvent<TEvent, TEventHandle>(string body)
+        //    where TEvent : IEvent
+        //    where TEventHandle : IEventHandler<TEvent>
+        //{
+        //    using (var scope = _serviceProvider.CreateScope())
+        //    {
+        //        TEventHandle eventHandler = scope.ServiceProvider.GetRequiredService<TEventHandle>();
+        //        TEvent integrationEvent = JsonConvert.DeserializeObject<TEvent>(body);
+        //        await eventHandler.Handle(integrationEvent/*, new MessageEventArgs(body, false)*/);
+        //    }
+        //}
         /// <summary>
         /// 
         /// </summary>
@@ -229,7 +229,11 @@ namespace RabbitMQ.EventBus.AspNetCore
                 }
                 object integrationEvent = JsonConvert.DeserializeObject(body, eventType);
                 Type concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
-                await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(eventHandler, new object[] { integrationEvent/*, new MessageEventArgs(body, args.Redelivered)*/ });
+                await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(
+                    eventHandler,
+                    new object[] {
+                        integrationEvent, new EventHandlerArgs(body, args.Redelivered,args.Exchange,args.RoutingKey)
+                    });
             }
         }
     }
