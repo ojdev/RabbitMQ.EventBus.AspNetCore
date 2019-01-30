@@ -13,7 +13,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
         public string Body { get; set; }
         public DateTimeOffset Time { get; set; }
     }
-    [EventBus(Exchange = "RabbitMQ.EventBus.Simple", RoutingKey = "rabbitmq.eventbus.test")]
+    //[EventBus(Exchange = "RabbitMQ.EventBus.Simple", RoutingKey = "rabbitmq.eventbus.test")]
     [EventBus(Exchange = "RabbitMQ.EventBus.Simple", RoutingKey = "rabbitmq.eventbus.test1")]
     public class MessageBody1 : IEvent
     {
@@ -36,13 +36,14 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
         }
 
 
-        
-
-        public Task Handle(MessageBody1 message/*, MessageEventArgs args*/)
+        public Task Handle(MessageBody1 message, EventHandlerArgs args)
         {
+            Console.WriteLine("==================================================");
             Console.WriteLine(id + "=>" + typeof(MessageBody1).Name);
             Console.WriteLine(message.Serialize());
-            //Console.WriteLine(args.Serialize());
+            Console.WriteLine(args.Original);
+            Console.WriteLine(args.Redelivered);
+            Console.WriteLine("==================================================");
             return Task.CompletedTask;
         }
     }
@@ -61,15 +62,15 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
         [HttpGet]
         public ActionResult<string> Get()
         {
-            _eventBus.Publish(new
-            {
-                Body = "rabbitmq.eventbus.test=>发送消息",
-                Time = DateTimeOffset.Now
-            }, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test");
+            //_eventBus.Publish(new
+            //{
+            //    Body = "rabbitmq.eventbus.test=>发送消息",
+            //    Time = DateTimeOffset.Now
+            //}, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test");
             _eventBus.Publish(new
             {
                 Body = "rabbitmq.eventbus.test1=>发送消息",
-                Time = DateTimeOffset.Now
+                Time = 432
             }, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test1");
             return "Ok";
         }

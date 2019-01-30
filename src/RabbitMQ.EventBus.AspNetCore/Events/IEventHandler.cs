@@ -1,6 +1,4 @@
-﻿using RabbitMQ.Client.Events;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace RabbitMQ.EventBus.AspNetCore.Events
 {
@@ -16,30 +14,42 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
         /// <param name="message"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        Task Handle(TEvent message);
+        Task Handle(TEvent message, EventHandlerArgs args);
     }
     /// <summary>
     /// 
     /// </summary>
-    public class MessageEventArgs
+    public class EventHandlerArgs
     {
         /// <summary>
         /// 原始消息
         /// </summary>
-        public string Original { get; }
+        public string Original { get; set; }
         /// <summary>
-        /// 是否重新投递的消息
+        /// 是否为打回的消息
         /// </summary>
-        public bool Redelivered { get; }
+        public bool Redelivered { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Exchange { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string RoutingKey { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="original"></param>
         /// <param name="redelivered"></param>
-        public MessageEventArgs(string original, bool redelivered)
+        /// <param name="exchange"></param>
+        /// <param name="routingKey"></param>
+        public EventHandlerArgs(string original, bool redelivered, string exchange, string routingKey)
         {
-            Original = original ?? throw new ArgumentNullException(nameof(original));
+            Original = original;
             Redelivered = redelivered;
+            Exchange = exchange;
+            RoutingKey = routingKey;
         }
     }
 }
