@@ -20,7 +20,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
         public string Body { get; set; }
         public DateTimeOffset Time { get; set; }
     }
-    public class MessageBodyHandle :  IEventHandler<MessageBody1>, IDisposable
+    public class MessageBodyHandle : IEventHandler<MessageBody1>, IDisposable
     {
         private Guid id;
         private readonly ILogger<MessageBodyHandle> _logger;
@@ -70,7 +70,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
             _eventBus.Publish(new
             {
                 Body = "rabbitmq.eventbus.test1=>发送消息",
-                Time = 432
+                Time = DateTimeOffset.Now,
             }, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test1");
             return "Ok";
         }

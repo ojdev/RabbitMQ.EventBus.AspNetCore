@@ -63,15 +63,16 @@ namespace Microsoft.Extensions.DependencyInjection
             ILogger<IRabbitMQEventBus> logger = app.ApplicationServices.GetRequiredService<ILogger<IRabbitMQEventBus>>();
             using (logger.BeginScope("EventBus Subscribe"))
             {
+                logger.LogInformation($"=======================================================================");
                 foreach (Type mType in typeof(IEvent).GetAssemblies())
                 {
                     foreach (Type hType in typeof(IEventHandler<>).GetMakeGenericType(mType))
                     {
-                        logger.LogInformation($"{mType.Name}=>{hType.Name}");
+                        logger.LogInformation($"{mType.Name}\t=>\t{hType.Name}");
                         eventBus.Subscribe(mType, hType);
                     }
                 }
-                logger.LogInformation($"Ok.");
+                logger.LogInformation($"=======================================================================");
             }
         }
         /// <summary>
