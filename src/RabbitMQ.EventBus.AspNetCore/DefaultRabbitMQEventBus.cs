@@ -133,6 +133,7 @@ namespace RabbitMQ.EventBus.AspNetCore
         public void Subscribe(Type eventType, Type eventHandleType, string type = ExchangeType.Topic)
         {
             var attributes = eventType.GetCustomAttributes(typeof(EventBusAttribute), true);
+            var millisecondsDelay = (int?)_persistentConnection?.Configuration?.ConsumerFailRetryInterval.TotalMilliseconds ?? 1000;
             foreach (var attribute in attributes)
             {
                 if (attribute is EventBusAttribute attr)
@@ -175,13 +176,16 @@ namespace RabbitMQ.EventBus.AspNetCore
                         catch (Exception ex)
                         {
                             _logger.LogError(new EventId(ex.HResult), ex, ex.Message);
-                            await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds);
-                            channel.BasicNack(ea.DeliveryTag, false, true);
                         }
                         finally
                         {
                             _eventHandlerFactory?.SubscribeEvent(new EventBusArgs(_persistentConnection.Endpoint, ea.Exchange, queue, attr.RoutingKey, type, _persistentConnection.Configuration.ClientProvidedName, body, isAck));
                             _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{isAck}\t{ea.Exchange}\t{ea.RoutingKey}\t{body}");
+                            if (!isAck)
+                            {
+                                await Task.Delay(millisecondsDelay);
+                                channel.BasicNack(ea.DeliveryTag, false, true);
+                            }
                         }
                     };
                     channel.CallbackException += (sender, ex) =>
@@ -232,7 +236,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                 await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(
                     eventHandler,
                     new object[] {
-                        integrationEvent, new EventHandlerArgs(body, args.Redelivered,args.Exchange,args.RoutingKey)
+                        integrationEvent, new EventHandlerArgs(body, args.Redelivered, args.Exchange, args.RoutingKey)
                     });
             }
         }
