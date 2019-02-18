@@ -31,6 +31,5 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
         /// </summary>
         /// <returns></returns>
         IModel CreateModel();
-
     }
 }

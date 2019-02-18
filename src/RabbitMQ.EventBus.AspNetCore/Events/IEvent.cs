@@ -7,6 +7,5 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
     /// </summary>
     public interface IEvent
     {
-
     }
 }

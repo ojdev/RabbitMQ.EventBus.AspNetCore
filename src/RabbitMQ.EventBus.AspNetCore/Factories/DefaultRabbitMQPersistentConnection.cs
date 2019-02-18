@@ -11,7 +11,6 @@ using System.Net.Sockets;
 
 namespace RabbitMQ.EventBus.AspNetCore.Factories
 {
-
     internal sealed class DefaultRabbitMQPersistentConnection : IRabbitMQPersistentConnection
     {
         public RabbitMQEventBusConnectionConfiguration Configuration { get; }
@@ -20,7 +19,6 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
         private IConnection _connection;
         private bool _disposed;
         private readonly object sync_root = new object();
-
 
         public string Endpoint => _connection?.Endpoint.ToString();
         public DefaultRabbitMQPersistentConnection(RabbitMQEventBusConnectionConfiguration configuration, IConnectionFactory connectionFactory, ILogger<DefaultRabbitMQPersistentConnection> logger)
@@ -32,17 +30,14 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
 
         public bool IsConnected => _connection != null && _connection.IsOpen && !_disposed;
 
-
         public IModel CreateModel()
         {
             if (!IsConnected)
             {
                 throw new InvalidOperationException("No RabbitMQ connections are available to perform this action");
             }
-
             return _connection.CreateModel();
         }
-
 
         public void Dispose()
         {
@@ -60,7 +55,6 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
                 _logger.LogCritical(ex.ToString());
             }
         }
-
 
         public bool TryConnect()
         {
@@ -96,6 +90,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
                 }
             }
         }
+
         private void OnConnectionBlocked(object sender, ConnectionBlockedEventArgs e)
         {
             if (_disposed)
