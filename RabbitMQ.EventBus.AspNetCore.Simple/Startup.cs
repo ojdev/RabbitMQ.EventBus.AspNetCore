@@ -23,12 +23,12 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
             string assemblyName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddRabbitMQEventBus("amqp://guest:guest@192.168.0.252:5672/", eventBusOptionAction: eventBusOption =>
-            {
-                eventBusOption.ClientProvidedAssembly(assemblyName);
-                eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
-                eventBusOption.RetryOnFailure(TimeSpan.FromSeconds(1));
-            });
+            services.AddRabbitMQEventBus(() => "amqp://guest:guest@192.168.0.252:5672/", eventBusOptionAction: eventBusOption =>
+             {
+                 eventBusOption.ClientProvidedAssembly(assemblyName);
+                 eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
+                 eventBusOption.RetryOnFailure(TimeSpan.FromSeconds(1));
+             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

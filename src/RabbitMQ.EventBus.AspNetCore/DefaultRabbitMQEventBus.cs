@@ -231,12 +231,11 @@ namespace RabbitMQ.EventBus.AspNetCore
                 {
                     throw new InvalidOperationException(eventHandleType.Name);
                 }
-                object integrationEvent = JsonConvert.DeserializeObject(body, eventType);
                 Type concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
                 await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(
                     eventHandler,
                     new object[] {
-                        integrationEvent, new EventHandlerArgs(body, args.Redelivered, args.Exchange, args.RoutingKey)
+                         Activator.CreateInstance(typeof(EventHandlerArgs<>).MakeGenericType(eventType), new object[] { body, args.Redelivered, args.Exchange, args.RoutingKey })
                     });
             }
         }

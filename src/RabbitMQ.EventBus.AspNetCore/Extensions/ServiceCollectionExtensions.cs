@@ -20,10 +20,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加RabbitMQEventBus
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="connectionString"></param>
+        /// <param name="connectionAction">使用匿名函数取得连接字符串,用来兼容使用Consul获取服务地址的情况</param>
         /// <param name="eventBusOptionAction"></param>
         /// <returns></returns>
-        public static IServiceCollection AddRabbitMQEventBus(this IServiceCollection services, string connectionString, Action<RabbitMQEventBusConnectionConfigurationBuild> eventBusOptionAction)
+        public static IServiceCollection AddRabbitMQEventBus(this IServiceCollection services, Func<string> connectionAction, Action<RabbitMQEventBusConnectionConfigurationBuild> eventBusOptionAction)
         {
             RabbitMQEventBusConnectionConfiguration configuration = new RabbitMQEventBusConnectionConfiguration();
             RabbitMQEventBusConnectionConfigurationBuild configurationBuild = new RabbitMQEventBusConnectionConfigurationBuild(configuration);
@@ -31,13 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IRabbitMQPersistentConnection>(options =>
             {
                 ILogger<DefaultRabbitMQPersistentConnection> logger = options.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
-                IConnectionFactory factory = new ConnectionFactory
-                {
-                    AutomaticRecoveryEnabled = configuration.AutomaticRecoveryEnabled,
-                    NetworkRecoveryInterval = configuration.NetworkRecoveryInterval,
-                    Uri = new Uri(connectionString),
-                };
-                var connection = new DefaultRabbitMQPersistentConnection(configuration, factory, logger);
+                var connection = new DefaultRabbitMQPersistentConnection(configuration, connectionAction, logger);
                 connection.TryConnect();
                 return connection;
             });

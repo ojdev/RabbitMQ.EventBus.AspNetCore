@@ -20,11 +20,11 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
             Console.WriteLine("释放");
         }
 
-        public Task Handle(MessageBody1 message, EventHandlerArgs args)
+        public Task Handle(EventHandlerArgs<MessageBody1> args)
         {
             Console.WriteLine("==================================================");
             Console.WriteLine(id + "=>" + typeof(MessageBody1).Name);
-            Console.WriteLine(message.Serialize());
+            Console.WriteLine(args.Event.Body);
             Console.WriteLine(args.Original);
             Console.WriteLine(args.Redelivered);
             Console.WriteLine("==================================================");
