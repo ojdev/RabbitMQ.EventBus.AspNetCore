@@ -17,14 +17,20 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
         private readonly IConnectionFactory _connectionFactory;
         private readonly ILogger<DefaultRabbitMQPersistentConnection> _logger;
         private IConnection _connection;
+        Func<string> _connectionAction;
         private bool _disposed;
         private readonly object sync_root = new object();
 
         public string Endpoint => _connection?.Endpoint.ToString();
-        public DefaultRabbitMQPersistentConnection(RabbitMQEventBusConnectionConfiguration configuration, IConnectionFactory connectionFactory, ILogger<DefaultRabbitMQPersistentConnection> logger)
+        public DefaultRabbitMQPersistentConnection(RabbitMQEventBusConnectionConfiguration configuration, Func<string> connectionAction, ILogger<DefaultRabbitMQPersistentConnection> logger)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
+            _connectionAction = connectionAction ?? throw new ArgumentNullException(nameof(connectionAction));
+            _connectionFactory = new ConnectionFactory
+            {
+                AutomaticRecoveryEnabled = configuration.AutomaticRecoveryEnabled,
+                NetworkRecoveryInterval = configuration.NetworkRecoveryInterval
+            };
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -71,6 +77,9 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
 
                 policy.Execute(() =>
                 {
+                    string connectionString = _connectionAction.Invoke();
+                    _logger.WriteLog(Configuration.Level, $"[ConnectionString]:\t{connectionString}");
+                    _connectionFactory.Uri = new Uri(connectionString);
                     _connection = _connectionFactory.CreateConnection(clientProvidedName: Configuration.ClientProvidedName);
                 });
 

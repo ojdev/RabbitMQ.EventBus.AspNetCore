@@ -18,11 +18,11 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
         /// </summary>
         string Endpoint { get; }
         /// <summary>
-        /// 是否打开链接
+        /// 连接是否打开
         /// </summary>
         bool IsConnected { get; }
         /// <summary>
-        /// 尝试链接
+        /// 尝试连接
         /// </summary>
         /// <returns></returns>
         bool TryConnect();
