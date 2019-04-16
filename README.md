@@ -1,3 +1,5 @@
+[![License: MIT](https://www.rabbitmq.com/img/RabbitMQ-logo.svg)](https://www.rabbitmq.com/)
+
 # RabbitMQ.EventBus.AspNetCore 　　　　　　　　　　[Wiki](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki)
 [![DNC](https://img.shields.io/badge/.netcore-%3E%3D2.1-green.svg)](#)
 [![CodeFactor](https://www.codefactor.io/repository/github/ojdev/rabbitmq.eventbus.aspnetcore/badge)](https://www.codefactor.io/repository/github/ojdev/rabbitmq.eventbus.aspnetcore)
