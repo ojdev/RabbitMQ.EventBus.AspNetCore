@@ -30,7 +30,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
         /// <param name="redelivered"></param>
         /// <param name="exchange"></param>
         /// <param name="routingKey"></param>
-        protected EventHandlerArgs(string original, bool redelivered, string exchange, string routingKey)
+        public EventHandlerArgs(string original, bool redelivered, string exchange, string routingKey)
         {
             Original = original;
             Redelivered = redelivered;
