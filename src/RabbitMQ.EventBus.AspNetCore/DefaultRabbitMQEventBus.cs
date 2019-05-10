@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.EventBus.AspNetCore.Attributes;
+using RabbitMQ.EventBus.AspNetCore.Configurations;
 using RabbitMQ.EventBus.AspNetCore.Events;
 using RabbitMQ.EventBus.AspNetCore.Factories;
 using RabbitMQ.EventBus.AspNetCore.Modules;
@@ -68,68 +69,6 @@ namespace RabbitMQ.EventBus.AspNetCore
             _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{exchange}\t{routingKey}\t{body}");
             _eventHandlerFactory?.PubliushEvent(new EventBusArgs(_persistentConnection.Endpoint, exchange, "", routingKey, type, _persistentConnection.Configuration.ClientProvidedName, body, true));
         }
-        //public void Subscribe<TEvent, THandler>(string type = ExchangeType.Topic)
-        //    where TEvent : IEvent
-        //    where THandler : IEventHandler<TEvent>
-        //{
-        //    //Subscribe(typeof(TEvent), typeof(THandler));
-        //    #region MyRegion
-        //    /*object attribute = typeof(TEvent).GetCustomAttributes(typeof(EventBusAttribute), true).FirstOrDefault();
-        //        if (attribute is EventBusAttribute attr)
-        //        {
-        //            string queue = attr.Queue ?? $"{ attr.Exchange }.{ typeof(TEvent).Name }";
-        //            if (!_persistentConnection.IsConnected)
-        //            {
-        //                _persistentConnection.TryConnect();
-        //            }
-        //            IModel channel;
-        //            #region snippet
-        //            try
-        //            {
-        //                channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
-        //                channel.QueueDeclarePassive(queue);
-        //            }
-        //            catch
-        //            {
-        //                channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
-        //                channel.QueueDeclare(queue: queue,
-        //                                     durable: true,
-        //                                     exclusive: false,
-        //                                     autoDelete: false,
-        //                                     arguments: null);
-        //            }
-        //            #endregion
-        //            channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
-        //            channel.BasicQos(0, 1, false);
-        //            EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
-        //            consumer.Received += async (model, ea) =>
-        //            {
-        //                string body = Encoding.UTF8.GetString(ea.Body);
-        //                bool isAck = false;
-        //                try
-        //                {
-        //                    await ProcessEvent<TEvent, THandler>(body);
-        //                    channel.BasicAck(ea.DeliveryTag, multiple: false);
-        //                    isAck = true;
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    _logger.LogError(new EventId(ex.HResult), ex, ex.Message);
-        //                }
-        //                finally
-        //                {
-        //                    _logger.Information($"RabbitMQEventBus\t{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{isAck}\t{ea.Exchange}\t{ea.RoutingKey}\t{body}");
-        //                }
-        //            };
-        //            channel.CallbackException += (sender, ex) =>
-        //            {
-
-        //            };
-        //            channel.BasicConsume(queue: queue, autoAck: false, consumer: consumer);
-        //        }*/
-        //    #endregion
-        //}
-
         public void Subscribe(Type eventType, string type = ExchangeType.Topic)
         {
             var attributes = eventType.GetCustomAttributes(typeof(EventBusAttribute), true);
@@ -138,7 +77,7 @@ namespace RabbitMQ.EventBus.AspNetCore
             {
                 if (attribute is EventBusAttribute attr)
                 {
-                    string queue = attr.Queue ?? $"{ attr.Exchange }.{ eventType.Name }";
+                    string queue = attr.Queue ?? (_persistentConnection.Configuration.Prefix == QueuePrefixType.ExchangeName ? $"{ attr.Exchange }.{ eventType.Name }" : _persistentConnection.Configuration.ClientProvidedName);
                     if (!_persistentConnection.IsConnected)
                     {
                         _persistentConnection.TryConnect();
@@ -152,8 +91,9 @@ namespace RabbitMQ.EventBus.AspNetCore
                     }
                     catch
                     {
+
                         channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
-                        channel.QueueDeclare(queue: queue,
+                        channel.QueueDeclare(queue: queue,//_persistentConnection.Configuration.ClientProvidedName
                                              durable: true,
                                              exclusive: false,
                                              autoDelete: false,
@@ -196,24 +136,6 @@ namespace RabbitMQ.EventBus.AspNetCore
                 }
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TEvent"></typeparam>
-        /// <typeparam name="TEventHandle"></typeparam>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        //private async Task ProcessEvent<TEvent, TEventHandle>(string body)
-        //    where TEvent : IEvent
-        //    where TEventHandle : IEventHandler<TEvent>
-        //{
-        //    using (var scope = _serviceProvider.CreateScope())
-        //    {
-        //        TEventHandle eventHandler = scope.ServiceProvider.GetRequiredService<TEventHandle>();
-        //        TEvent integrationEvent = JsonConvert.DeserializeObject<TEvent>(body);
-        //        await eventHandler.Handle(integrationEvent/*, new MessageEventArgs(body, false)*/);
-        //    }
-        //}
         /// <summary>
         /// 
         /// </summary>
