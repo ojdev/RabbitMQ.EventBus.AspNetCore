@@ -8,6 +8,7 @@ using RabbitMQ.EventBus.AspNetCore.Events;
 using RabbitMQ.EventBus.AspNetCore.Factories;
 using RabbitMQ.EventBus.AspNetCore.Modules;
 using System;
+using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -60,10 +61,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 logger.LogInformation($"=======================================================================");
                 foreach (Type mType in typeof(IEvent).GetAssemblies())
                 {
-                    foreach (Type hType in typeof(IEventHandler<>).GetMakeGenericType(mType))
+                    var handlesAny = typeof(IEventHandler<>).GetMakeGenericType(mType);
+                    if (handlesAny.Any())
                     {
-                        logger.LogInformation($"{mType.Name}\t=>\t{hType.Name}");
-                        eventBus.Subscribe(mType, hType);
+
+                        logger.LogInformation($"{mType.Name}\t=>\t{string.Join("、", handlesAny)}");
+                        eventBus.Subscribe(mType);
                     }
                 }
                 logger.LogInformation($"=======================================================================");

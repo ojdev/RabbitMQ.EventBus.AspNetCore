@@ -25,15 +25,14 @@ namespace RabbitMQ.EventBus.AspNetCore
         /// <typeparam name="TEvent">消息体</typeparam>
         /// <typeparam name="THandler">消息处理</typeparam>
         /// <param name="type">消息类型</param>
-        void Subscribe<TEvent, THandler>(string type = ExchangeType.Topic)
-            where TEvent : IEvent
-            where THandler : IEventHandler<TEvent>;
+        //void Subscribe<TEvent, THandler>(string type = ExchangeType.Topic)
+        //    where TEvent : IEvent
+        //    where THandler : IEventHandler<TEvent>;
         /// <summary>
         /// 订阅消息
         /// </summary>
         /// <param name="eventType">消息体</param>
-        /// <param name="eventHandleType">消息处理</param>
         /// <param name="type">消息类型</param>
-        void Subscribe(Type eventType, Type eventHandleType, string type = ExchangeType.Topic);
+        void Subscribe(Type eventType, string type = ExchangeType.Topic);
     }
 }

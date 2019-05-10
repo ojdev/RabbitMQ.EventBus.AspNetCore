@@ -23,7 +23,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
             string assemblyName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddRabbitMQEventBus(() => "amqp://guest:guest@192.168.0.252:5672/", eventBusOptionAction: eventBusOption =>
+            services.AddRabbitMQEventBus(() => "amqp://guest:guest@192.168.0.251:5672/", eventBusOptionAction: eventBusOption =>
              {
                  eventBusOption.ClientProvidedAssembly(assemblyName);
                  eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
