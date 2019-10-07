@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Text;
+﻿using System.Text;
+using System.Text.Json;
 
 namespace System
 {
@@ -16,7 +16,7 @@ namespace System
         /// <returns></returns>
         public static string Serialize<TMessage>(this TMessage message)
         {
-            return JsonConvert.SerializeObject(message);
+            return JsonSerializer.Serialize(message);
         }
         /// <summary>
         /// 

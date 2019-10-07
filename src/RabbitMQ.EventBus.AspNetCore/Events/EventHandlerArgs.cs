@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.ComponentModel;
+using System.Text.Json;
 
 namespace RabbitMQ.EventBus.AspNetCore.Events
 {
@@ -47,7 +48,15 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
             {
                 if (_event == null)
                 {
-                    _event = JsonConvert.DeserializeObject<TEvent>(Original);
+                    try
+                    {
+
+                        _event = JsonSerializer.Deserialize<TEvent>(Original);
+                    }
+                    catch
+                    {
+                        _event = (TEvent)TypeDescriptor.GetConverter(typeof(TEvent)).ConvertFromInvariantString(Original);
+                    }
                 }
                 return _event;
             }

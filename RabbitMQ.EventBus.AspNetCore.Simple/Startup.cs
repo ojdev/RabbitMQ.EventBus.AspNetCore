@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Reflection;
 
@@ -21,9 +23,11 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
         public void ConfigureServices(IServiceCollection services)
         {
             string assemblyName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddRabbitMQEventBus(() => "amqp://guest:guest@192.168.0.251:5672/", eventBusOptionAction: eventBusOption =>
+            services.AddControllers();
+            services.AddHealthChecks();
+
+            services.AddRabbitMQEventBus(() => "amqp://guest:guest@192.168.0.250:5672/", eventBusOptionAction: eventBusOption =>
              {
                  eventBusOption.ClientProvidedAssembly(assemblyName);
                  eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
@@ -38,8 +42,20 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseRouting();
             app.RabbitMQEventBusAutoSubscribe();
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/hc", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+                {
+                    ResultStatusCodes = {
+                        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+                    }
+                });
+            });
         }
     }
 }
