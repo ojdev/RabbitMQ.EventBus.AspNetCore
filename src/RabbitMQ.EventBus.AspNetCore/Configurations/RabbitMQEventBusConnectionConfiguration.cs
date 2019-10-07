@@ -33,6 +33,10 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         /// </summary>
         public LogLevel Level { get; set; }
         /// <summary>
+        /// 队列名前缀（默认交换机名）
+        /// </summary>
+        public QueuePrefixType Prefix { get; set; }
+        /// <summary>
         /// 
         /// </summary>
         public RabbitMQEventBusConnectionConfiguration()
