@@ -1,5 +1,4 @@
 ﻿using RabbitMQ.Client;
-using RabbitMQ.EventBus.AspNetCore.Events;
 using System;
 
 namespace RabbitMQ.EventBus.AspNetCore
