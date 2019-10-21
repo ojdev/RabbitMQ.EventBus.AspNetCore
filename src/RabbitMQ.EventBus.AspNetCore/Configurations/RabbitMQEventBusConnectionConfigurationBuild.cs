@@ -58,7 +58,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         /// 队列名前缀
         /// </summary>
         /// <param name="queuePrefix"><see cref="QueuePrefixType"/></param>
-        public void QueuePrefix(QueuePrefixType queuePrefix = QueuePrefixType.ExchangeName)
+        public void QueuePrefix(QueuePrefixType queuePrefix = QueuePrefixType.ClientProvidedName)
         {
             Configuration.Prefix = queuePrefix;
         }

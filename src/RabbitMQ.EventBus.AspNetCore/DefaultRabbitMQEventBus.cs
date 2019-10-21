@@ -76,7 +76,9 @@ namespace RabbitMQ.EventBus.AspNetCore
             {
                 if (attribute is EventBusAttribute attr)
                 {
-                    string queue = attr.Queue ?? (_persistentConnection.Configuration.Prefix == QueuePrefixType.ExchangeName ? $"{ attr.Exchange }.{ eventType.Name }" : _persistentConnection.Configuration.ClientProvidedName);
+                    string queue = attr.Queue ?? (_persistentConnection.Configuration.Prefix == QueuePrefixType.ExchangeName
+                        ? $"{ attr.Exchange }.{ eventType.Name }"
+                        : $"{_persistentConnection.Configuration.ClientProvidedName}.{ eventType.Name }");//.{DateTimeOffset.Now.ToUnixTimeMilliseconds()}
                     if (!_persistentConnection.IsConnected)
                     {
                         _persistentConnection.TryConnect();
