@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Text.Json;
 
 namespace RabbitMQ.EventBus.AspNetCore.Events
@@ -55,7 +56,14 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
                     }
                     catch
                     {
-                        _event = (TEvent)TypeDescriptor.GetConverter(typeof(TEvent)).ConvertFromInvariantString(Original);
+                        try
+                        {
+                            _event = (TEvent)TypeDescriptor.GetConverter(typeof(TEvent)).ConvertFromInvariantString(Original);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
                     }
                 }
                 return _event;
