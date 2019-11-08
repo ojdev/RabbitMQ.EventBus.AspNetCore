@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.ComponentModel;
 using System.Text.Json;
 
@@ -9,6 +10,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
     /// </summary>
     public class EventHandlerArgs<TEvent>
     {
+        private readonly ILogger<TEvent> _logger;
         /// <summary>
         /// 原始消息
         /// </summary>
@@ -32,12 +34,14 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
         /// <param name="redelivered"></param>
         /// <param name="exchange"></param>
         /// <param name="routingKey"></param>
-        public EventHandlerArgs(string original, bool redelivered, string exchange, string routingKey)
+        /// <param name="logger"></param>
+        public EventHandlerArgs(string original, bool redelivered, string exchange, string routingKey, ILogger<TEvent> logger = null)
         {
             Original = original;
             Redelivered = redelivered;
             Exchange = exchange;
             RoutingKey = routingKey;
+            _logger = logger;
         }
         private TEvent _event;
         /// <summary>
@@ -51,7 +55,6 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
                 {
                     try
                     {
-
                         _event = JsonSerializer.Deserialize<TEvent>(Original);
                     }
                     catch
@@ -62,6 +65,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
                         }
                         catch (Exception ex)
                         {
+                            _logger.LogError(new EventId(ex.HResult), ex, $"content {Original} deserialize type {typeof(TEvent).Name} error {ex.Message}");
                             throw ex;
                         }
                     }

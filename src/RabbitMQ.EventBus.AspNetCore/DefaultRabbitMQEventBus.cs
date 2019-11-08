@@ -93,7 +93,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     catch
                     {
                         channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
-                        channel.QueueDeclare(queue: queue,//_persistentConnection.Configuration.ClientProvidedName
+                        channel.QueueDeclare(queue: queue,
                                              durable: true,
                                              exclusive: false,
                                              autoDelete: false,
@@ -151,6 +151,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                 foreach (Type eventHandleType in typeof(IEventHandler<>).GetMakeGenericType(eventType))
                 {
                     object eventHandler = scope.ServiceProvider.GetRequiredService(eventHandleType);
+                    object logger = scope.ServiceProvider.GetRequiredService(typeof(ILogger<>).MakeGenericType(eventType));
                     if (eventHandler == null)
                     {
                         throw new InvalidOperationException(eventHandleType.Name);
@@ -159,7 +160,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(
                         eventHandler,
                         new object[] {
-                         Activator.CreateInstance(typeof(EventHandlerArgs<>).MakeGenericType(eventType), new object[] { body, args.Redelivered, args.Exchange, args.RoutingKey })
+                         Activator.CreateInstance(typeof(EventHandlerArgs<>).MakeGenericType(eventType), new object[] { body, args.Redelivered, args.Exchange, args.RoutingKey, logger })
                         });
                 }
             }

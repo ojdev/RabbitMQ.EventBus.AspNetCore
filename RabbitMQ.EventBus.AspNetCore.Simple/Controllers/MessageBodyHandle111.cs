@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
 {
-    public class MessageBodyHandle111 : IEventHandler<MessageBody1>, IDisposable
+    public class MessageBodyHandle111 : IEventHandler<MessageBody1>
     {
         private Guid id;
         private readonly ILogger<MessageBodyHandle> _logger;
