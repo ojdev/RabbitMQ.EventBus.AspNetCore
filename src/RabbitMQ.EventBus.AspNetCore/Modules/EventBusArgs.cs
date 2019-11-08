@@ -48,7 +48,7 @@
         /// <param name="clientProvidedName">客户端</param>
         /// <param name="message">消息</param>
         /// <param name="success">结果</param>
-        public EventBusArgs(string endPoint, string exchange, string queue, string routingKey, string exchangeType, string clientProvidedName, string message,bool success)
+        public EventBusArgs(string endPoint, string exchange, string queue, string routingKey, string exchangeType, string clientProvidedName, string message, bool success)
         {
             Endpoint = endPoint;
             Exchange = exchange;
