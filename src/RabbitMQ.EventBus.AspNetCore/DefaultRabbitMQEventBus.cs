@@ -78,7 +78,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                 {
                     string queue = attr.Queue ?? (_persistentConnection.Configuration.Prefix == QueuePrefixType.ExchangeName
                         ? $"{ attr.Exchange }.{ eventType.Name }"
-                        : $"{_persistentConnection.Configuration.ClientProvidedName}.{ eventType.Name }");//.{DateTimeOffset.Now.ToUnixTimeMilliseconds()}
+                        : $"{_persistentConnection.Configuration.ClientProvidedName}.{ eventType.Name }");
                     if (!_persistentConnection.IsConnected)
                     {
                         _persistentConnection.TryConnect();
@@ -92,7 +92,6 @@ namespace RabbitMQ.EventBus.AspNetCore
                     }
                     catch
                     {
-
                         channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
                         channel.QueueDeclare(queue: queue,//_persistentConnection.Configuration.ClientProvidedName
                                              durable: true,

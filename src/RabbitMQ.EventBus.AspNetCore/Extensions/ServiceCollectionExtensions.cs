@@ -64,7 +64,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     var handlesAny = typeof(IEventHandler<>).GetMakeGenericType(mType);
                     if (handlesAny.Any())
                     {
-
                         logger.LogInformation($"{mType.Name}\t=>\t{string.Join("、", handlesAny)}");
                         eventBus.Subscribe(mType);
                     }
