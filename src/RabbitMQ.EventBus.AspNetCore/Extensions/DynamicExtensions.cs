@@ -6,7 +6,7 @@ namespace System
     /// <summary>
     /// 
     /// </summary>
-    public static class DynamicExtensions
+    internal static class DynamicExtensions
     {
         /// <summary>
         /// 

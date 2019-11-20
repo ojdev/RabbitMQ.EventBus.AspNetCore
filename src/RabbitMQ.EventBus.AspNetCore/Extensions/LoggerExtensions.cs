@@ -5,7 +5,7 @@ namespace Microsoft.Extensions.Logging
     /// <summary>
     /// 
     /// </summary>
-    public static class LoggerExtensions
+    internal static class LoggerExtensions
     {
         private static Action<ILogger, string, Exception> _informationAction = null;
         private static Action<ILogger, string, Exception> _warningAction = null;

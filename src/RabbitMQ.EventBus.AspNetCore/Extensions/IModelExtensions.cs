@@ -6,7 +6,7 @@ namespace RabbitMQ.Client
     /// <summary>
     /// 
     /// </summary>
-    public static class IModelExtensions
+    internal static class IModelExtensions
     {
         /// <summary>
         /// Do a passive exchange declaration.
