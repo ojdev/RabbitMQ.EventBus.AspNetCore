@@ -1,9 +1,7 @@
 name: .NET Core
 
-on: 
-  push:
-    tags:
-      - v*
+on: [push]
+
 jobs:
   build:
 
