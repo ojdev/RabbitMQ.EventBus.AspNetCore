@@ -8,6 +8,7 @@ using RabbitMQ.EventBus.AspNetCore.Events;
 using RabbitMQ.EventBus.AspNetCore.Factories;
 using RabbitMQ.EventBus.AspNetCore.Modules;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -85,6 +86,33 @@ namespace RabbitMQ.EventBus.AspNetCore
                     }
                     IModel channel;
                     #region snippet
+                    var arguments = new Dictionary<string, object>();
+
+                    #region 死信队列设置
+                    if (_persistentConnection.Configuration.DeadLetterExchange.Enabled)
+                    {
+                        string deadExchangeName = $"{_persistentConnection.Configuration.DeadLetterExchange.ExchangeNamePrefix}{_persistentConnection.Configuration.DeadLetterExchange.CustomizeExchangeName ?? attr.Exchange}{_persistentConnection.Configuration.DeadLetterExchange.ExchangeNameSuffix}";
+                        string deadQueueName = $"{_persistentConnection.Configuration.DeadLetterExchange.ExchangeNamePrefix}{queue}{_persistentConnection.Configuration.DeadLetterExchange.ExchangeNameSuffix}";
+                        IModel dlxChannel;
+                        try
+                        {
+                            dlxChannel = _persistentConnection.ExchangeDeclare(exchange: deadExchangeName, type: type);
+                            dlxChannel.QueueDeclarePassive(deadQueueName);
+                        }
+                        catch
+                        {
+                            dlxChannel = _persistentConnection.ExchangeDeclare(exchange: deadExchangeName, type: type);
+                            dlxChannel.QueueDeclare(queue: deadQueueName,
+                                                durable: true,
+                                                exclusive: false,
+                                                autoDelete: false,
+                                                arguments: null);
+                        }
+                        dlxChannel.QueueBind(deadQueueName, deadExchangeName, attr.RoutingKey, null);
+                        arguments.Add("x-dead-letter-exchange", deadExchangeName);
+                    }
+                    #endregion
+
                     try
                     {
                         channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
@@ -93,11 +121,15 @@ namespace RabbitMQ.EventBus.AspNetCore
                     catch
                     {
                         channel = _persistentConnection.ExchangeDeclare(exchange: attr.Exchange, type: type);
+                        if (_persistentConnection.Configuration.MessageTTL != null && _persistentConnection.Configuration.MessageTTL > 0)
+                        {
+                            arguments.Add("x-message-ttl", _persistentConnection.Configuration.MessageTTL);
+                        }
                         channel.QueueDeclare(queue: queue,
                                              durable: true,
                                              exclusive: false,
                                              autoDelete: false,
-                                             arguments: null);
+                                             arguments: arguments);
                     }
                     #endregion
                     channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
