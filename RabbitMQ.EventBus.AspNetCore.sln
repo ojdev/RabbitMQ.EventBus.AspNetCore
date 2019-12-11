@@ -17,6 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F1EBF978-A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMQ.EventBus.AspNetCore.Sample", "RabbitMQ.EventBus.AspNetCore.Sample\RabbitMQ.EventBus.AspNetCore.Sample.csproj", "{A17039B1-80FF-4EB1-8130-9E13B6ED149E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{9A1A7C5B-E554-44F8-AF5D-B689AC40BEB2}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
