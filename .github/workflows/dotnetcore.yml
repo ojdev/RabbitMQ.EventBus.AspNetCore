@@ -1,11 +1,14 @@
 name: .NET Core
 
-on: [push]
+on: 
+  push:
+    tags:
+      - v*
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -13,10 +16,16 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.100
-        source-url:: https://api.nuget.org/v3/index.json 
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.NUGET_API_KEY}} 
+        source-url:: https://api.nuget.org/v3/index.json
     - name: Build with dotnet
       run: dotnet build --configuration Release src/RabbitMQ.EventBus.AspNetCore 
-    - name: Push to nuget 
-      run: dotnet nuget push src/*/bin/Release/*.nupkg
+  deploy:
+    needs: build
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Pack
+        run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source -o artifacts/
+      - name: Publish Symbols to NuGet
+        run: dotnet nuget push artifacts/*.symbols.nupkg --api-key ${{secrets.NUGET_API_KEY}} 
+    
