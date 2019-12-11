@@ -16,12 +16,7 @@ jobs:
         source-url:: https://api.nuget.org/v3/index.json
     - name: Build with dotnet
       run: dotnet build --configuration Release src/RabbitMQ.EventBus.AspNetCore 
-  deploy:
-    needs: build
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Pack
-        run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source -o artifacts/
-      - name: Publish Symbols to NuGet
-        run: dotnet nuget push artifacts/*.symbols.nupkg --api-key ${{secrets.NUGET_API_KEY}} 
+    - name: Pack
+      run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source -o artifacts/
+    - name: Publish Symbols to NuGet
+      run: dotnet nuget push artifacts/*.symbols.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://www.nuget.org/api/v2/package
