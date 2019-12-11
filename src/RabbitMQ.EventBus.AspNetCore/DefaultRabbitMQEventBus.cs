@@ -173,28 +173,25 @@ namespace RabbitMQ.EventBus.AspNetCore
         /// </summary>
         /// <param name="body"></param>
         /// <param name="eventType"></param>
-        /// <param name="eventHandleType"></param>
         /// <param name="args"></param>
         /// <returns></returns>
         private async Task ProcessEvent(string body, Type eventType, BasicDeliverEventArgs args)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            using var scope = _serviceProvider.CreateScope();
+            foreach (Type eventHandleType in typeof(IEventHandler<>).GetMakeGenericType(eventType))
             {
-                foreach (Type eventHandleType in typeof(IEventHandler<>).GetMakeGenericType(eventType))
+                object eventHandler = scope.ServiceProvider.GetRequiredService(eventHandleType);
+                object logger = scope.ServiceProvider.GetRequiredService(typeof(ILogger<>).MakeGenericType(eventType));
+                if (eventHandler == null)
                 {
-                    object eventHandler = scope.ServiceProvider.GetRequiredService(eventHandleType);
-                    object logger = scope.ServiceProvider.GetRequiredService(typeof(ILogger<>).MakeGenericType(eventType));
-                    if (eventHandler == null)
-                    {
-                        throw new InvalidOperationException(eventHandleType.Name);
-                    }
-                    Type concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
-                    await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(
-                        eventHandler,
-                        new object[] {
-                         Activator.CreateInstance(typeof(EventHandlerArgs<>).MakeGenericType(eventType), new object[] { body, args.Redelivered, args.Exchange, args.RoutingKey, logger })
-                        });
+                    throw new InvalidOperationException(eventHandleType.Name);
                 }
+                Type concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
+                await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(
+                    eventHandler,
+                    new object[] {
+                         Activator.CreateInstance(typeof(EventHandlerArgs<>).MakeGenericType(eventType), new object[] { body, args.Redelivered, args.Exchange, args.RoutingKey, logger })
+                    });
             }
         }
     }
