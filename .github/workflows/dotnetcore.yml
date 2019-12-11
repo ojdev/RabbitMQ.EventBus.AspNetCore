@@ -16,6 +16,6 @@ jobs:
       env:
         NUGET_AUTH_TOKEN: ${{secrets.NUGET_API_KEY}} 
     - name: Build with dotnet
-      run: dotnet build --configuration Release
-    - name: Push NuGet
-      run: dotnet nuget push /bin/Release/*.nupkg
+      run: dotnet build --configuration Release src/RabbitMQ.EventBus.AspNetCore 
+    - name: Push to nuget 
+      run: dotnet nuget push src/*/bin/Release/*/*.nupkg
