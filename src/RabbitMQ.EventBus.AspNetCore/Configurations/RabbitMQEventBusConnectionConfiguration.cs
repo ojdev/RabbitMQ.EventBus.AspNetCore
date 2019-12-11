@@ -8,6 +8,8 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
     /// </summary>
     public sealed class RabbitMQEventBusConnectionConfiguration
     {
+        private int? messageTTL;
+
         /// <summary>
         /// 
         /// </summary>
@@ -37,6 +39,25 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         /// </summary>
         public QueuePrefixType Prefix { get; set; }
         /// <summary>
+        /// 死信交换机设置
+        /// </summary>
+        public DeadLetterExchangeConfig DeadLetterExchange { set; get; }
+        /// <summary>
+        /// 消息驻留时长(毫秒),超过此市场的则判断为死信
+        /// </summary>
+        public int? MessageTTL
+        {
+            get => messageTTL;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(MessageTTL)}必须大于0");
+                }
+                messageTTL = value;
+            }
+        }
+        /// <summary>
         /// 
         /// </summary>
         public RabbitMQEventBusConnectionConfiguration()
@@ -46,6 +67,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
             NetworkRecoveryInterval = TimeSpan.FromSeconds(5);
             AutomaticRecoveryEnabled = true;
             ConsumerFailRetryInterval = TimeSpan.FromSeconds(1);
+            DeadLetterExchange = new DeadLetterExchangeConfig();
         }
     }
 }

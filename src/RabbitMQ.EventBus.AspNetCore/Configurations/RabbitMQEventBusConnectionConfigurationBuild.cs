@@ -62,5 +62,26 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         {
             Configuration.Prefix = queuePrefix;
         }
+        /// <summary>
+        /// 设置消息的驻留时常(毫秒)
+        /// 如果开启了死信队列设置则默认为60000毫秒
+        /// </summary>
+        /// <param name="millisecond"></param>
+        public void MessageTTL(int millisecond)
+        {
+            Configuration.MessageTTL = millisecond;
+        }
+        /// <summary>
+        /// 死信队列设置
+        /// </summary>
+        /// <param name="config"></param>
+        public void DeadLetterExchangeConfig(Action<DeadLetterExchangeConfig> config)
+        {
+            config?.Invoke(Configuration.DeadLetterExchange);
+            if (Configuration.DeadLetterExchange.Enabled && Configuration.MessageTTL == null)
+            {
+                Configuration.MessageTTL = 60000;
+            }
+        }
     }
 }
