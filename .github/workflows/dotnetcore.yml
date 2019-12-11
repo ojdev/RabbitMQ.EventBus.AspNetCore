@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - v*
-
 jobs:
   build:
 
@@ -28,4 +27,3 @@ jobs:
         run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source -o artifacts/
       - name: Publish Symbols to NuGet
         run: dotnet nuget push artifacts/*.symbols.nupkg --api-key ${{secrets.NUGET_API_KEY}} 
-    
