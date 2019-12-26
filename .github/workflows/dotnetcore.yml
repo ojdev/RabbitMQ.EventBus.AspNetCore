@@ -21,4 +21,4 @@ jobs:
     - name: Pack
       run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source -o artifacts/
     - name: Publish Symbols to Github
-      run: dotnet nuget push artifacts/*.symbols.nupkg --source "github"
+      run: dotnet nuget push artifacts/*.symbols.nupkg --api-key ${{secrets.GITHUB_TOKEN}} --source https://nuget.pkg.github.com/ojdev/index.json
