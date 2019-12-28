@@ -55,7 +55,10 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
                 {
                     try
                     {
-                        _event = JsonSerializer.Deserialize<TEvent>(Original);
+                        _event = JsonSerializer.Deserialize<TEvent>(Original, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
                     }
                     catch
                     {
