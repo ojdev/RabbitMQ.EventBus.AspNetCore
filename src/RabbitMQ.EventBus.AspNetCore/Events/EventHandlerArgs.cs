@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace RabbitMQ.EventBus.AspNetCore.Events
 {
@@ -57,7 +59,8 @@ namespace RabbitMQ.EventBus.AspNetCore.Events
                     {
                         _event = JsonSerializer.Deserialize<TEvent>(Original, new JsonSerializerOptions
                         {
-                            PropertyNameCaseInsensitive = true
+                            PropertyNameCaseInsensitive = true,
+                            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
                         });
                     }
                     catch
