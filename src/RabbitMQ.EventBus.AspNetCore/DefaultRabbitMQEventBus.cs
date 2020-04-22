@@ -133,15 +133,16 @@ namespace RabbitMQ.EventBus.AspNetCore
                     }
                     #endregion
                     channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
-                    channel.BasicQos(0, 1, false);
+                    channel.BasicQos(0, _persistentConnection.Configuration.PrefetchCount, false);
                     EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
                     consumer.Received += async (model, ea) =>
                     {
-                        string body = Encoding.UTF8.GetString(ea.Body);
+                        string body = Encoding.UTF8.GetString(ea.Body.ToArray());
                         bool isAck = false;
                         try
                         {
                             await ProcessEvent(body, eventType, ea);
+                            //不确定是否需要改变Multiple是否需要改为true
                             channel.BasicAck(ea.DeliveryTag, multiple: false);
                             isAck = true;
                         }

@@ -83,5 +83,17 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
                 Configuration.MessageTTL = 60000;
             }
         }
+        /// <summary>
+        /// 设置预取条数
+        /// </summary>
+        /// <param name="prefetchCount"></param>
+        public void SetBasicQos(ushort prefetchCount)
+        {
+            if (prefetchCount < 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(prefetchCount)}必须大于0");
+            }
+            Configuration.PrefetchCount = prefetchCount;
+        }
     }
 }
