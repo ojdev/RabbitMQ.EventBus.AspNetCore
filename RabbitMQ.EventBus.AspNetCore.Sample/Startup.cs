@@ -33,6 +33,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
                  eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
                  eventBusOption.RetryOnFailure(TimeSpan.FromSeconds(1));
                  eventBusOption.MessageTTL(2000);
+                 eventBusOption.SetBasicQos(10);
                  eventBusOption.DeadLetterExchangeConfig(config =>
                  {
                      config.Enabled = true;

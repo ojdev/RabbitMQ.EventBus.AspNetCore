@@ -35,6 +35,10 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
         /// </summary>
         public LogLevel Level { get; set; }
         /// <summary>
+        /// 每次预取的消息条数（默认：1）
+        /// </summary>
+        public ushort PrefetchCount { get; set; }
+        /// <summary>
         /// 队列名前缀（默认ClientProvidedName）
         /// </summary>
         public QueuePrefixType Prefix { get; set; }
@@ -68,6 +72,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Configurations
             AutomaticRecoveryEnabled = true;
             ConsumerFailRetryInterval = TimeSpan.FromSeconds(1);
             DeadLetterExchange = new DeadLetterExchangeConfig();
+            PrefetchCount = 1;
         }
     }
 }
