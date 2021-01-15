@@ -1,5 +1,3 @@
-![BlueskyClouds’s github stats](https://github-readme-stats.vercel.app/api?username=ojdev&show_icons=true&theme=merko)
-
 [![License: MIT](https://www.rabbitmq.com/img/RabbitMQ-logo.svg)](https://www.rabbitmq.com/)
 
 # RabbitMQ.EventBus.AspNetCore 　　　　　　　　　　[Wiki](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki)
