@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
 using RabbitMQ.EventBus.AspNetCore;
 using RabbitMQ.EventBus.AspNetCore.Configurations;
 using RabbitMQ.EventBus.AspNetCore.Events;
@@ -26,8 +25,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddRabbitMQEventBus(this IServiceCollection services, Func<string> connectionAction, Action<RabbitMQEventBusConnectionConfigurationBuild> eventBusOptionAction)
         {
-            RabbitMQEventBusConnectionConfiguration configuration = new RabbitMQEventBusConnectionConfiguration();
-            RabbitMQEventBusConnectionConfigurationBuild configurationBuild = new RabbitMQEventBusConnectionConfigurationBuild(configuration);
+            RabbitMQEventBusConnectionConfiguration configuration = new();
+            RabbitMQEventBusConnectionConfigurationBuild configurationBuild = new(configuration);
             eventBusOptionAction?.Invoke(configurationBuild);
             services.TryAddSingleton<IRabbitMQPersistentConnection>(options =>
             {
@@ -79,7 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void RabbitMQEventBusModule(this IApplicationBuilder app, Action<RabbitMQEventBusModuleOption> moduleOptions)
         {
             IEventHandlerModuleFactory factory = app.ApplicationServices.GetRequiredService<IEventHandlerModuleFactory>();
-            RabbitMQEventBusModuleOption moduleOption = new RabbitMQEventBusModuleOption(factory, app.ApplicationServices);
+            RabbitMQEventBusModuleOption moduleOption = new(factory, app.ApplicationServices);
             moduleOptions?.Invoke(moduleOption);
         }
     }

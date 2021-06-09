@@ -15,10 +15,10 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: 5.0.301
     - name: Build with dotnet
       run: dotnet build --configuration Release src/RabbitMQ.EventBus.AspNetCore 
     - name: Pack
-      run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source  -p:PackageVersion=3.1.$GITHUB_RUN_NUMBER -o artifacts/
+      run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source  -p:PackageVersion=5.0.$GITHUB_RUN_NUMBER -o artifacts/
     - name: Publish Symbols to NuGet
       run: dotnet nuget push artifacts/*.symbols.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
