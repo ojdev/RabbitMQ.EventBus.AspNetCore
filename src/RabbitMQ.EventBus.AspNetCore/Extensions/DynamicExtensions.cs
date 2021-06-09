@@ -1,7 +1,5 @@
-﻿using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
+﻿using Newtonsoft.Json;
+using System.Text;
 
 namespace System
 {
@@ -18,11 +16,7 @@ namespace System
         /// <returns></returns>
         public static string Serialize<TMessage>(this TMessage message)
         {
-            return JsonSerializer.Serialize(message, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-            });
+            return JsonConvert.SerializeObject(message);
         }
         /// <summary>
         /// 

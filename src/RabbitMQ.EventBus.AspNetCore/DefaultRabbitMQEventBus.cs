@@ -66,7 +66,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                              mandatory: true,
                              basicProperties: properties,
                              body: body.GetBytes());
-            _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{exchange}\t{routingKey}\t{body}");
+            _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now:yyyy-MM-dd HH:mm:ss}\t{exchange}\t{routingKey}\t{body}");
             _eventHandlerFactory?.PubliushEvent(new EventBusArgs(_persistentConnection.Endpoint, exchange, "", routingKey, type, _persistentConnection.Configuration.ClientProvidedName, body, true));
         }
         public void Subscribe(Type eventType, string type = ExchangeType.Topic)
@@ -134,7 +134,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     #endregion
                     channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
                     channel.BasicQos(0, _persistentConnection.Configuration.PrefetchCount, false);
-                    EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
+                    EventingBasicConsumer consumer = new(channel);
                     consumer.Received += async (model, ea) =>
                     {
                         string body = Encoding.UTF8.GetString(ea.Body.ToArray());
@@ -153,7 +153,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                         finally
                         {
                             _eventHandlerFactory?.SubscribeEvent(new EventBusArgs(_persistentConnection.Endpoint, ea.Exchange, queue, attr.RoutingKey, type, _persistentConnection.Configuration.ClientProvidedName, body, isAck));
-                            _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{isAck}\t{ea.Exchange}\t{ea.RoutingKey}\t{body}");
+                            _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now:yyyy-MM-dd HH:mm:ss}\t{isAck}\t{ea.Exchange}\t{ea.RoutingKey}\t{body}");
                             if (!isAck)
                             {
                                 await Task.Delay(millisecondsDelay);
