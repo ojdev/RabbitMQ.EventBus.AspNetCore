@@ -20,7 +20,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
         Func<string> _connectionAction;
         private bool _disposed;
         private readonly object sync_root = new object();
-
+        private IModel _model;
         public string Endpoint => _connection?.Endpoint.ToString();
         public DefaultRabbitMQPersistentConnection(RabbitMQEventBusConnectionConfiguration configuration, Func<string> connectionAction, ILogger<DefaultRabbitMQPersistentConnection> logger)
         {
@@ -42,7 +42,12 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
             {
                 throw new InvalidOperationException("No RabbitMQ connections are available to perform this action");
             }
-            return _connection.CreateModel();
+            if ((_model?.IsOpen ?? false) == false)
+            {
+                _model = _connection.CreateModel();
+                Console.WriteLine("创建一个Channel");
+            }
+            return _model;
         }
 
         public void Dispose()

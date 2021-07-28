@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
 {
@@ -16,18 +17,23 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
 
         // GET api/values
         [HttpGet]
-        public ActionResult<string> Get()
+        public async Task<ActionResult<string>> Get()
         {
             //_eventBus.Publish(new
             //{
             //    Body = "rabbitmq.eventbus.test=>发送消息",
             //    Time = DateTimeOffset.Now
             //}, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test");
-            _eventBus.Publish(new
+            for (int i = 0; i < 1000; i++)
             {
-                Body = "rabbitmq.eventbus.test1=>发送消息",
-                Time = DateTimeOffset.Now,
-            }, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test1");
+                _eventBus.Publish(new
+                {
+                    Body = $"rabbitmq.eventbus.test1=>发送消息/t{i}",
+                    Time = DateTimeOffset.Now,
+                }, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test1");
+                await Task.Yield();
+                await Task.Delay(500);
+            }
             return "Ok";
         }
 
