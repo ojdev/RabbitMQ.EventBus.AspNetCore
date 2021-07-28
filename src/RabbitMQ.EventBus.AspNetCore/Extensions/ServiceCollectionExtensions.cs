@@ -33,6 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 ILogger<DefaultRabbitMQPersistentConnection> logger = options.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                 var connection = new DefaultRabbitMQPersistentConnection(configuration, connectionAction, logger);
                 connection.TryConnect();
+                Console.WriteLine("创建一次连接");
                 return connection;
             });
             services.TryAddSingleton<IEventHandlerModuleFactory, EventHandlerModuleFactory>();
