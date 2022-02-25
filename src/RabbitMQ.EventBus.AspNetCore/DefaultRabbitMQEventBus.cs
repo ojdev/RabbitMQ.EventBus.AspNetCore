@@ -23,6 +23,7 @@ namespace RabbitMQ.EventBus.AspNetCore
         private readonly ILogger<DefaultRabbitMQEventBus> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly IEventHandlerModuleFactory _eventHandlerFactory;
+        private readonly Dictionary<string, IModel> subscribes;
         /// <summary>
         /// 
         /// </summary>
@@ -36,9 +37,10 @@ namespace RabbitMQ.EventBus.AspNetCore
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _eventHandlerFactory = eventHandlerFactory ?? throw new ArgumentNullException(nameof(eventHandlerFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            subscribes = new Dictionary<string, IModel>();
+            _logger.LogInformation("消息队列准备就绪");
         }
 
-        private IModel _publishChannel;
         /// <summary>
         /// 
         /// </summary>
@@ -50,15 +52,8 @@ namespace RabbitMQ.EventBus.AspNetCore
         public void Publish<TMessage>(TMessage message, string exchange, string routingKey, string type = ExchangeType.Topic)
         {
             string body = message.Serialize();
-            if (_publishChannel?.IsOpen != true)
-            {
-                if (_persistentConnection.IsConnected)
-                {
-                    _persistentConnection.TryConnect();
-                }
-                _publishChannel = _persistentConnection.ExchangeDeclare(exchange, type: type);
-                _publishChannel.BasicReturn += async (se, ex) => await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(t => Publish(body, ex.Exchange, ex.RoutingKey));
-            }
+            using var _publishChannel = _persistentConnection.ExchangeDeclare(exchange, type: type);
+            _publishChannel.BasicReturn += async (se, ex) => await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(t => Publish(body, ex.Exchange, ex.RoutingKey));
             IBasicProperties properties = _publishChannel.CreateBasicProperties();
             properties.DeliveryMode = 2; // persistent
             _publishChannel.BasicPublish(exchange: exchange,
@@ -66,7 +61,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                              mandatory: true,
                              basicProperties: properties,
                              body: body.GetBytes());
-            _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss")}\t{exchange}\t{routingKey}\t{body}");
+            _logger.WriteLog(_persistentConnection.Configuration.Level, $"{DateTimeOffset.Now:yyyy-MM-dd HH:mm:ss}\t{exchange}\t{routingKey}\t{body}");
             _eventHandlerFactory?.PubliushEvent(new EventBusArgs(_persistentConnection.Endpoint, exchange, "", routingKey, type, _persistentConnection.Configuration.ClientProvidedName, body, true));
         }
         public void Subscribe(Type eventType, string type = ExchangeType.Topic)
@@ -80,11 +75,9 @@ namespace RabbitMQ.EventBus.AspNetCore
                     string queue = attr.Queue ?? (_persistentConnection.Configuration.Prefix == QueuePrefixType.ExchangeName
                         ? $"{ attr.Exchange }.{ eventType.Name }"
                         : $"{_persistentConnection.Configuration.ClientProvidedName}.{ eventType.Name }");
-                    if (!_persistentConnection.IsConnected)
-                    {
-                        _persistentConnection.TryConnect();
-                    }
-                    IModel channel;
+
+                    var onlyKey = $"{attr.Exchange}_{queue}_{attr.RoutingKey}";
+                    subscribes.TryGetValue(onlyKey, out IModel channel);
                     #region snippet
                     var arguments = new Dictionary<string, object>();
 
@@ -134,6 +127,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     #endregion
                     channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
                     channel.BasicQos(0, _persistentConnection.Configuration.PrefetchCount, false);
+                    subscribes[onlyKey] = channel;
                     EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
                     consumer.Received += async (model, ea) =>
                     {

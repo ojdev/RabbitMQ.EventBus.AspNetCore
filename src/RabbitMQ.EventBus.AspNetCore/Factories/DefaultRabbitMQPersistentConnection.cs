@@ -76,12 +76,12 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
                 );
 
                 policy.Execute(() =>
-                {
-                    string connectionString = _connectionAction.Invoke();
-                    _logger.WriteLog(LogLevel.Information, $"[ConnectionString]:\t{connectionString}");
-                    _connectionFactory.Uri = new Uri(connectionString);
-                    _connection = _connectionFactory.CreateConnection(clientProvidedName: Configuration.ClientProvidedName);
-                });
+               {
+                   string connectionString = _connectionAction.Invoke();
+                   _logger.WriteLog(LogLevel.Information, $"[ConnectionString]:\t{connectionString}");
+                   _connectionFactory.Uri = new Uri(connectionString);
+                   _connection = _connectionFactory.CreateConnection(clientProvidedName: Configuration.ClientProvidedName);
+               });
 
                 if (IsConnected)
                 {
@@ -89,7 +89,6 @@ namespace RabbitMQ.EventBus.AspNetCore.Factories
                     _connection.CallbackException += OnCallbackException;
                     _connection.ConnectionBlocked += OnConnectionBlocked;
                     _logger.WriteLog(LogLevel.Information, $"RabbitMQ persistent connection acquired a connection {_connection.Endpoint.HostName} and is subscribed to failure events");
-
                     return true;
                 }
                 else
