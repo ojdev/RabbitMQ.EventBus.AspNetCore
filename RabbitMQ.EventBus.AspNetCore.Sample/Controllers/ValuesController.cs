@@ -24,6 +24,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
             //    Body = "rabbitmq.eventbus.test=>发送消息",
             //    Time = DateTimeOffset.Now
             //}, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test");
+
             for (int i = 0; i < 1000; i++)
             {
                 _eventBus.Publish(new
