@@ -24,13 +24,16 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
             //    Body = "rabbitmq.eventbus.test=>发送消息",
             //    Time = DateTimeOffset.Now
             //}, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test");
-            for (int i = 0; i < 100; i++)
+
+            for (int i = 0; i < 1000; i++)
             {
                 _eventBus.Publish(new
                 {
-                    Body = "rabbitmq.eventbus.test1=>发送消息",
+                    Body = $"rabbitmq.eventbus.test1=>发送消息/t{i}",
                     Time = DateTimeOffset.Now,
                 }, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test1");
+                await Task.Yield();
+                await Task.Delay(500);
             }
             return "Ok";
         }

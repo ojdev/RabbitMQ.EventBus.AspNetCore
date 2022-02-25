@@ -54,6 +54,7 @@ namespace RabbitMQ.EventBus.AspNetCore
             string body = message.Serialize();
             using var _publishChannel = _persistentConnection.ExchangeDeclare(exchange, type: type);
             _publishChannel.BasicReturn += async (se, ex) => await Task.Delay((int)_persistentConnection.Configuration.ConsumerFailRetryInterval.TotalMilliseconds).ContinueWith(t => Publish(body, ex.Exchange, ex.RoutingKey));
+
             IBasicProperties properties = _publishChannel.CreateBasicProperties();
             properties.DeliveryMode = 2; // persistent
             _publishChannel.BasicPublish(exchange: exchange,
