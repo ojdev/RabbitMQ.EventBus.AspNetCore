@@ -24,11 +24,11 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="enabled">是否开启(默认开启)</param>
+        /// <param name="enabled">是否开启(默认关闭)</param>
         /// <param name="exchangeNamePrefix">交换机名前缀(默认为"dead-")</param>
         /// <param name="exchangeNameSuffix">交换机名后缀</param>
         /// <param name="customizeExchangeName">自定义交换机名(留空则使用原有的交换机名)</param>
-        public DeadLetterExchangeConfig(bool enabled = true, string exchangeNamePrefix = "dead-", string exchangeNameSuffix = null, string customizeExchangeName = null)
+        public DeadLetterExchangeConfig(bool enabled = false, string exchangeNamePrefix = "dead-", string exchangeNameSuffix = null, string customizeExchangeName = null)
         {
             Enabled = enabled;
             ExchangeNameSuffix = exchangeNameSuffix;

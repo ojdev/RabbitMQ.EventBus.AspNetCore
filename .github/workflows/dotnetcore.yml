@@ -1,24 +1,35 @@
-name: .NET Core
+name: .NET Core App CI to Docker Hub
 
-on: 
+on:
   push:
-    branches:
-      - master
+    tags:
+    - v*
+
 
 jobs:
   build:
-
-    runs-on: [ubuntu-latest]
-
+  
+    runs-on: ubuntu-latest    
+    env:
+      TZ: Asia/Shanghai
+      TAG_NUMBER: $GITHUB_RUN_NUMBER
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
+    - uses: actions/checkout@v2
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.301
+        dotnet-version: 3.1.100
+    - name: Get tag
+      id: tag
+      uses: dawidd6/action-get-tag@v1
+      with:
+        # Optionally strip `v` prefix
+        strip_v: true
+    - name: Set VERSION variable from tag
+      run: echo ${{steps.tag.outputs.tag}}     
     - name: Build with dotnet
       run: dotnet build --configuration Release src/RabbitMQ.EventBus.AspNetCore 
     - name: Pack
-      run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source  -p:PackageVersion=5.0.$GITHUB_RUN_NUMBER -o artifacts/
+      run: dotnet pack src/RabbitMQ.EventBus.AspNetCore -c Release --include-symbols --include-source  -p:PackageVersion=3.1.$GITHUB_RUN_NUMBER -o artifacts/
     - name: Publish Symbols to NuGet
       run: dotnet nuget push artifacts/*.symbols.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json

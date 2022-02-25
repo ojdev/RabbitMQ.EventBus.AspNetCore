@@ -27,7 +27,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
             services.AddControllers();
             services.AddHealthChecks();
 
-            services.AddRabbitMQEventBus(() => "amqp://guest:guest@192.168.0.250:5672/", eventBusOptionAction: eventBusOption =>
+            services.AddRabbitMQEventBus(() => "amqp://guest:guest@localhost:5672/", eventBusOptionAction: eventBusOption =>
              {
                  eventBusOption.ClientProvidedAssembly(assemblyName);
                  eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
