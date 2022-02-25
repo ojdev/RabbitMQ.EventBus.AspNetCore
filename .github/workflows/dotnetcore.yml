@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.100
+        dotnet-version: 5.0.301
     - name: Get tag
       id: tag
       uses: dawidd6/action-get-tag@v1

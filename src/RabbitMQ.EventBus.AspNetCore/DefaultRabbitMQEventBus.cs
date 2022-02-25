@@ -128,7 +128,7 @@ namespace RabbitMQ.EventBus.AspNetCore
                     channel.QueueBind(queue, attr.Exchange, attr.RoutingKey, null);
                     channel.BasicQos(0, _persistentConnection.Configuration.PrefetchCount, false);
                     subscribes[onlyKey] = channel;
-                    EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
+                    EventingBasicConsumer consumer = new(channel);
                     consumer.Received += async (model, ea) =>
                     {
                         string body = Encoding.UTF8.GetString(ea.Body.ToArray());
