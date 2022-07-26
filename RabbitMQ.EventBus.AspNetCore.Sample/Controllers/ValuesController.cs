@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -19,23 +20,18 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
         [HttpGet]
         public async Task<ActionResult<string>> Get()
         {
-            //_eventBus.Publish(new
-            //{
-            //    Body = "rabbitmq.eventbus.test=>发送消息",
-            //    Time = DateTimeOffset.Now
-            //}, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test");
 
-            for (int i = 0; i < 1000; i++)
+            Console.WriteLine($"发送消息{1}");
+            var body = new
             {
-                _eventBus.Publish(new
-                {
-                    Body = $"rabbitmq.eventbus.test1=>发送消息/t{i}",
-                    Time = DateTimeOffset.Now,
-                }, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test1");
-                await Task.Yield();
-                await Task.Delay(500);
-            }
-            return "Ok";
+                requestId = Guid.NewGuid(),
+                Body = $"rabbitmq.eventbus.test=>发送消息/t{1}",
+                Time = DateTimeOffset.Now,
+            };
+            var r = await _eventBus.PublishAsync<string>(body, exchange: "RabbitMQ.EventBus.Simple", routingKey: "rabbitmq.eventbus.test");
+            Console.WriteLine($"返回了{r}");
+            await Task.Delay(500);
+            return r;
         }
 
         // GET api/values/5

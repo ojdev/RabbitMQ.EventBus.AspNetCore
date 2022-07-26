@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
 {
-    public class MessageBodyHandle : IEventHandler<MessageBody1>, IDisposable
+    public class MessageBodyHandle : IEventResponseHandler<MessageBody, string>, IDisposable
     {
         private Guid id;
         private readonly ILogger<MessageBodyHandle> _logger;
@@ -17,18 +17,13 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
         }
         public void Dispose()
         {
-            Console.WriteLine("释放");
+            _logger.LogInformation("MessageBodyHandle Disposable.");
         }
 
-        public Task Handle(EventHandlerArgs<MessageBody1> args)
+
+        public Task<string> HandleAsync(HandlerEventArgs<MessageBody> args)
         {
-            Console.WriteLine("==================================================");
-            Console.WriteLine(id + "=>" + typeof(MessageBody1).Name);
-            Console.WriteLine(args.Event.Body);
-            Console.WriteLine(args.Original);
-            Console.WriteLine(args.Redelivered);
-            Console.WriteLine("==================================================");
-            return Task.CompletedTask;
+            return Task.FromResult("收到消息，已确认");
         }
     }
 }
