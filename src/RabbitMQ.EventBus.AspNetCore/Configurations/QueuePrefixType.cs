@@ -1,17 +1,15 @@
-﻿namespace RabbitMQ.EventBus.AspNetCore.Configurations
+﻿namespace RabbitMQ.EventBus.AspNetCore.Configurations;
+/// <summary>
+/// 队列名前缀
+/// </summary>
+public enum QueuePrefixType
 {
     /// <summary>
-    /// 队列名前缀
+    /// 交换机名
     /// </summary>
-    public enum QueuePrefixType
-    {
-        /// <summary>
-        /// 交换机名
-        /// </summary>
-        ExchangeName,
-        /// <summary>
-        /// 
-        /// </summary>
-        ClientProvidedName
-    }
+    ExchangeName,
+    /// <summary>
+    /// 
+    /// </summary>
+    ClientProvidedName
 }

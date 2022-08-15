@@ -5,30 +5,27 @@ using System.Threading.Tasks;
 
 namespace RabbitMQ.EventBus.AspNetCore.Simple.Controllers
 {
-    public class MessageBodyHandle : IEventHandler<MessageBody1>, IDisposable
+public class MessageBodyHandle : IEventResponseHandler<MessageBody, string>, IDisposable
+{
+    private Guid id;
+    private readonly ILogger<MessageBodyHandle> _logger;
+
+    public MessageBodyHandle(ILogger<MessageBodyHandle> logger)
     {
-        private Guid id;
-        private readonly ILogger<MessageBodyHandle> _logger;
-
-        public MessageBodyHandle(ILogger<MessageBodyHandle> logger)
-        {
-            id = Guid.NewGuid();
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-        public void Dispose()
-        {
-            Console.WriteLine("释放");
-        }
-
-        public Task Handle(EventHandlerArgs<MessageBody1> args)
-        {
-            Console.WriteLine("==================================================");
-            Console.WriteLine(id + "=>" + typeof(MessageBody1).Name);
-            Console.WriteLine(args.Event.Body);
-            Console.WriteLine(args.Original);
-            Console.WriteLine(args.Redelivered);
-            Console.WriteLine("==================================================");
-            return Task.CompletedTask;
-        }
+        id = Guid.NewGuid();
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
+    public void Dispose()
+    {
+        _logger.LogInformation("MessageBodyHandle Disposable.");
+    }
+
+
+    public Task<string> HandleAsync(HandlerEventArgs<MessageBody> args)
+    {
+        return Task.FromResult("收到消息，已确认" + DateTimeOffset.Now);
+    }
+}
+
+
 }

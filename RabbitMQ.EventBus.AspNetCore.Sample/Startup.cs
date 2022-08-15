@@ -27,19 +27,35 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
             services.AddControllers();
             services.AddHealthChecks();
 
-            services.AddRabbitMQEventBus(() => "amqp://guest:guest@localhost:5672/", eventBusOptionAction: eventBusOption =>
-             {
-                 eventBusOption.ClientProvidedAssembly(assemblyName);
-                 eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
-                 eventBusOption.RetryOnFailure(TimeSpan.FromSeconds(1));
-                 eventBusOption.MessageTTL(2000);
-                 eventBusOption.SetBasicQos(10);
-                 eventBusOption.DeadLetterExchangeConfig(config =>
-                 {
-                     config.Enabled = true;
-                     config.ExchangeNameSuffix = "-test";
-                 });
-             });
+
+            services.AddRabbitMQEventBus("localhost", 5672, "guest", "guest", "", eventBusOptionAction: eventBusOption =>
+            {
+                eventBusOption.ClientProvidedAssembly(assemblyName);
+                eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
+                eventBusOption.RetryOnFailure(TimeSpan.FromSeconds(1));
+                eventBusOption.MessageTTL(2000);
+                eventBusOption.SetBasicQos(10);
+                eventBusOption.DeadLetterExchangeConfig(config =>
+                {
+                    config.Enabled = false;
+                    config.ExchangeNameSuffix = "-test";
+                });
+            });
+            //or
+            //
+            //services.AddRabbitMQEventBus(() => "amqp://guest:guest@localhost:5672/", eventBusOptionAction: eventBusOption =>
+            //{
+            //    eventBusOption.ClientProvidedAssembly(assemblyName);
+            //    eventBusOption.EnableRetryOnFailure(true, 5000, TimeSpan.FromSeconds(30));
+            //    eventBusOption.RetryOnFailure(TimeSpan.FromSeconds(1));
+            //    eventBusOption.MessageTTL(2000);
+            //    eventBusOption.SetBasicQos(10);
+            //    eventBusOption.DeadLetterExchangeConfig(config =>
+            //    {
+            //        config.Enabled = false;
+            //        config.ExchangeNameSuffix = "-test";
+            //    });
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +66,6 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
                 app.UseDeveloperExceptionPage();
             }
             app.UseRouting();
-            app.RabbitMQEventBusAutoSubscribe();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
