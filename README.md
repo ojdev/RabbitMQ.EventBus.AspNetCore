@@ -1,7 +1,6 @@
 [![License: MIT](https://www.rabbitmq.com/img/RabbitMQ-logo.svg)](https://www.rabbitmq.com/)
 
 # RabbitMQ.EventBus.AspNetCore 　　　　　　　　　　[Wiki](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki)
-[![.NET Core App CI to Docker Hub](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/actions/workflows/dotnetcore.yml/badge.svg)](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/actions/workflows/dotnetcore.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/ojdev/rabbitmq.eventbus.aspnetcore/badge)](https://www.codefactor.io/repository/github/ojdev/rabbitmq.eventbus.aspnetcore)
 [![NuGet](https://img.shields.io/nuget/v/RabbitMQ.EventBus.AspNetCore.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore)
 [![NuGet](https://img.shields.io/nuget/dt/RabbitMQ.EventBus.AspNetCore.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore)
