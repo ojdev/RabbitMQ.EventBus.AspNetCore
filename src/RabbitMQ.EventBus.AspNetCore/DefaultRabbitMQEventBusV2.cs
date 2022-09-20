@@ -100,8 +100,8 @@ internal class DefaultRabbitMQEventBusV2 : IRabbitMQEventBus
             if (attribute is EventBusAttribute attr)
             {
                 string queue = attr.Queue ?? (_persistentConnection.Configuration.Prefix == QueuePrefixType.ExchangeName
-                    ? $"{ attr.Exchange }.{ eventType.Name }"
-                    : $"{GlaobalExchangeName}.{ eventType.Name }");
+                    ? $"{attr.Exchange}.{eventType.Name}"
+                    : (eventType.FullName ?? $"{GlaobalExchangeName}.{eventType.Name}"));
 
                 var onlyKey = $"{attr.Exchange}_{queue}_{attr.RoutingKey}";
                 if (!subscribes.TryGetValue(onlyKey, out IModel channel))
@@ -158,8 +158,8 @@ internal class DefaultRabbitMQEventBusV2 : IRabbitMQEventBus
             if (attribute is EventBusAttribute attr)
             {
                 string queue = attr.Queue ?? (_persistentConnection.Configuration.Prefix == QueuePrefixType.ExchangeName
-                    ? $"{ attr.Exchange }.{ eventType.Name }"
-                    : $"{GlaobalExchangeName}.{ eventType.Name }");
+                    ? $"{attr.Exchange}.{eventType.Name}"
+                    : (eventType.FullName ?? $"{GlaobalExchangeName}.{eventType.Name}"));
 
                 var onlyKey = $"{attr.Exchange}_{queue}_{attr.RoutingKey}";
                 _logger.LogWarning($"onlyKey => {onlyKey}");
