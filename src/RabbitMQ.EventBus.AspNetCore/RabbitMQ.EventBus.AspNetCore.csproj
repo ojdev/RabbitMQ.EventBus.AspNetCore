@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIconUrl></PackageIconUrl>
     <RepositoryUrl>https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore</RepositoryUrl>
-    <RepositoryType>github</RepositoryType>
+    <RepositoryType>git</RepositoryType>
     <PackageTags>rqbbitmq,dnc,eventbus</PackageTags>
     <Company>欧俊</Company>
     <Authors>欧俊</Authors>
@@ -15,6 +15,10 @@
     <Version>6.0.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<ImplicitUsings>enable</ImplicitUsings>
+	<Title>RabbitMQ.EventBus.AspNetCore</Title>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<Copyright>Corp. 2018 欧俊</Copyright>
+	<PackageIcon>dotnet-logo.png</PackageIcon>
 
   </PropertyGroup>
 
@@ -22,7 +26,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
   </ItemGroup>
@@ -31,6 +34,17 @@
     <None Include="..\..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="dotnet-logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
