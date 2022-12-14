@@ -1,4 +1,4 @@
-[![License: MIT](https://www.rabbitmq.com/img/RabbitMQ-logo.svg)](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/blob/dev/LICENSE)
+[License: MIT](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/blob/dev/LICENSE)
 
 # RabbitMQ.EventBus.AspNetCore
 
