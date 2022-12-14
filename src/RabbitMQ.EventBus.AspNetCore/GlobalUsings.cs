@@ -10,6 +10,7 @@ global using RabbitMQ.EventBus.AspNetCore;
 global using RabbitMQ.EventBus.AspNetCore.Attributes;
 global using RabbitMQ.EventBus.AspNetCore.Configurations;
 global using RabbitMQ.EventBus.AspNetCore.Events;
+global using RabbitMQ.EventBus.AspNetCore.Extensions;
 global using RabbitMQ.EventBus.AspNetCore.Factories;
 global using RabbitMQ.EventBus.AspNetCore.Modules;
 global using System;

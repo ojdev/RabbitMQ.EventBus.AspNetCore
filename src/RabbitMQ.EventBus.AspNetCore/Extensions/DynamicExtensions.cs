@@ -1,4 +1,4 @@
-﻿namespace System;
+﻿namespace RabbitMQ.EventBus.AspNetCore.Extensions;
 
 /// <summary>
 /// 

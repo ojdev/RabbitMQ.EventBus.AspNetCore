@@ -1,4 +1,4 @@
-﻿namespace RabbitMQ.Client;
+﻿namespace RabbitMQ.EventBus.AspNetCore.Extensions;
 /// <summary>
 /// 
 /// </summary>
