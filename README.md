@@ -1,6 +1,7 @@
-[![License: MIT](https://www.rabbitmq.com/img/RabbitMQ-logo.svg)](https://www.rabbitmq.com/)
+[![License: MIT](https://www.rabbitmq.com/img/RabbitMQ-logo.svg)](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/blob/dev/LICENSE)
 
-# RabbitMQ.EventBus.AspNetCore 　　　　　　　　　　[Wiki](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki)
+# RabbitMQ.EventBus.AspNetCore
+
 [![CodeFactor](https://www.codefactor.io/repository/github/ojdev/rabbitmq.eventbus.aspnetcore/badge)](https://www.codefactor.io/repository/github/ojdev/rabbitmq.eventbus.aspnetcore)
 [![NuGet](https://img.shields.io/nuget/v/RabbitMQ.EventBus.AspNetCore.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore)
 [![NuGet](https://img.shields.io/nuget/dt/RabbitMQ.EventBus.AspNetCore.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore)
@@ -11,9 +12,13 @@
 [![ISSUES](https://img.shields.io/github/issues-closed/ojdev/RabbitMQ.EventBus.AspNetCore.svg)]()
 
 
-## Modules
-### RabbitMQ.EventBus.AspNetCore.Butterfly
+该包为一个基于官方RabbitMQ.Client的二次封装包，专门针对Asp.Net Core项目进行开发，在微服务中进行消息的传递使用起来比较方便。
 
-|Name|Package|NuGet|Status|Document|
-|:------|:------|:-----|:-----|:-----|
-|Butterfly|[RabbitMQ.EventBus.AspNetCore.Butterfly](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore.Butterfly)|[![NuGet](https://img.shields.io/nuget/v/RabbitMQ.EventBus.AspNetCore.Butterfly.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore.Butterfly)|[![NuGet](https://img.shields.io/nuget/dt/RabbitMQ.EventBus.AspNetCore.Butterfly.svg?style=popout)](https://www.nuget.org/packages/RabbitMQ.EventBus.AspNetCore.Butterfly)|[使用说明](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki/RabbitMQ.EventBus.AspNetCore.Butterfly)|
+目前功能：
+
+- [x] 发布/订阅
+- [x] 死信队列
+- [x] RPC功能（实验性）
+
+
+# [使用说明](https://github.com/ojdev/RabbitMQ.EventBus.AspNetCore/wiki)
