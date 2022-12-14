@@ -11,10 +11,12 @@ internal static class DynamicExtensions
     /// <typeparam name="TMessage"></typeparam>
     /// <param name="message"></param>
     /// <returns></returns>
-    public static string Serialize<TMessage>(this TMessage message)
+    public static string Serialize<TMessage>(this TMessage message) => JsonSerializer.Serialize(message, new JsonSerializerOptions
     {
-        return JsonConvert.SerializeObject(message);
-    }
+        PropertyNameCaseInsensitive = true,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString
+    });
     /// <summary>
     /// 
     /// </summary>
@@ -36,7 +38,12 @@ internal static class DynamicExtensions
         {
             try
             {
-                return JsonConvert.DeserializeObject<TResponse>(message);
+                return JsonSerializer.Deserialize<TResponse>(message, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString
+                });
             }
             catch
             {
