@@ -1,4 +1,6 @@
-﻿namespace RabbitMQ.EventBus.AspNetCore;
+﻿using Microsoft.Extensions.Logging;
+
+namespace RabbitMQ.EventBus.AspNetCore;
 
 internal class DefaultRabbitMQEventBusV2 : IRabbitMQEventBus
 {
@@ -252,14 +254,13 @@ internal class DefaultRabbitMQEventBusV2 : IRabbitMQEventBus
 
     private async Task<string> ProcessEventAsync(string body, Type eventType, Type responseType, BasicDeliverEventArgs args)
     {
-        using var scope = _serviceProvider.CreateScope();
-        Type eventHandlerType = typeof(IEventResponseHandler<,>);
-        dynamic eventHandler = scope.ServiceProvider.GetRequiredService(eventHandlerType.MakeGenericType(eventType, responseType));
+        Type eventHandlerType = typeof(IEventResponseHandler<,>).MakeGenericType(eventType, responseType);
+        dynamic eventHandler = _serviceProvider.GetRequiredService(eventHandlerType);
         if (eventHandler == null)
         {
             throw new InvalidOperationException(eventHandler.GetType().Name);
         }
-        Type concreteType = eventHandlerType.MakeGenericType(eventType, responseType);
+        Type concreteType = eventHandlerType;
         var r = (object)await concreteType.GetMethod("HandleAsync").Invoke(
                eventHandler,
                new object[] {
@@ -277,6 +278,23 @@ internal class DefaultRabbitMQEventBusV2 : IRabbitMQEventBus
     /// <returns></returns>
     private async Task ProcessEventAsync(string body, Type eventType, BasicDeliverEventArgs args)
     {
+        //Type eventHandlerType = typeof(IEventHandler<>).MakeGenericType(eventType);
+        //dynamic eventHandler = _serviceProvider.GetRequiredService(eventHandlerType);
+        //if (eventHandler == null)
+        //{
+        //    throw new InvalidOperationException(eventHandler.GetType().Name);
+        //}
+        ////IEventHandler<RabbitMQ.EventBus.AspNetCore.Simple.Controllers.MessageBody>
+
+        //object logger = _serviceProvider.GetRequiredService(typeof(ILogger<>).MakeGenericType(eventType));
+        //Type concreteType = eventHandlerType.MakeGenericType(eventType);
+        //await (Task)concreteType.GetMethod(nameof(IEventHandler<IEvent>.Handle)).Invoke(
+        //       eventHandler,
+        //       new object[] {
+        //        Activator.CreateInstance(typeof(HandlerEventArgs<>).MakeGenericType(eventType), new object[] {  body, args.Redelivered, args.Exchange, args.RoutingKey, logger })
+        //       });
+
+
         using var scope = _serviceProvider.CreateScope();
         foreach (Type eventHandleType in typeof(IEventHandler<>).GetMakeGenericType(eventType))
         {

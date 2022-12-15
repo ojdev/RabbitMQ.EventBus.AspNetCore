@@ -1,4 +1,7 @@
-﻿/// <summary>
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+/// <summary>
 /// 
 /// </summary>
 public static class ServiceCollectionExtensions
@@ -15,7 +18,7 @@ public static class ServiceCollectionExtensions
     /// <param name="eventBusOptionAction"></param>
     /// <param name="moduleOptions"></param>
     /// <returns></returns>
-    public static IServiceProvider AddRabbitMQEventBus(this IServiceCollection services, string endpoint, int port, string username, string password, string visualHost, Action<RabbitMQEventBusConnectionConfigurationBuild> eventBusOptionAction, Action<RabbitMQEventBusModuleOption> moduleOptions = null)
+    public static IServiceCollection AddRabbitMQEventBus(this IServiceCollection services, string endpoint, int port, string username, string password, string visualHost, Action<RabbitMQEventBusConnectionConfigurationBuild> eventBusOptionAction, Action<RabbitMQEventBusModuleOption> moduleOptions = null)
         => AddRabbitMQEventBus(services, () => $"amqp://{username}:{password}@{endpoint}:{port}/{visualHost}", eventBusOptionAction, moduleOptions);
 
     /// <summary>
@@ -25,7 +28,7 @@ public static class ServiceCollectionExtensions
     /// <param name="connectionAction">使用匿名函数取得连接字符串,用来兼容使用Consul获取服务地址的情况</param>
     /// <param name="eventBusOptionAction"></param>
     /// <returns></returns>
-    public static IServiceProvider AddRabbitMQEventBus(this IServiceCollection services, Func<string> connectionAction, Action<RabbitMQEventBusConnectionConfigurationBuild> eventBusOptionAction, Action<RabbitMQEventBusModuleOption> moduleOptions = null)
+    public static IServiceCollection AddRabbitMQEventBus(this IServiceCollection services, Func<string> connectionAction, Action<RabbitMQEventBusConnectionConfigurationBuild> eventBusOptionAction, Action<RabbitMQEventBusModuleOption> moduleOptions = null)
     {
         RabbitMQEventBusConnectionConfiguration configuration = new();
         RabbitMQEventBusConnectionConfigurationBuild configurationBuild = new(configuration);
@@ -38,6 +41,7 @@ public static class ServiceCollectionExtensions
             logger.LogInformation("RabbitMQ event bus connected.");
             return connection;
         });
+
         services.TryAddSingleton<IRabbitMQEventBus>(options =>
         {
             IRabbitMQPersistentConnection rabbitMQPersistentConnection = options.GetRequiredService<IRabbitMQPersistentConnection>();
@@ -45,35 +49,34 @@ public static class ServiceCollectionExtensions
             var eventBus = DefaultRabbitMQEventBusV2.CreateInstance(rabbitMQPersistentConnection, options, logger);
             return eventBus;
         });
-        foreach (Type mType in typeof(IEvent).GetAssemblies())
+        foreach (var (registerType, handlerType, eventType, responseType) in RabbitmqEventBusHandlers.RegisterEventResponseHandlers())
         {
-            foreach (Type hType in typeof(IEventHandler<>).GetMakeGenericType(mType))
-            {
-                services.TryAddTransient(hType);
-            }
+            services.TryAddTransient(registerType, handlerType);
         }
-        var responseHandlers = services.RegisterEventResponseHandlers().ToList();
-        var serviceProvider = services.BuildServiceProvider();
-        var _logger = serviceProvider.GetRequiredService<ILogger<DefaultRabbitMQEventBusV2>>();
-        var rmqeV2 = serviceProvider.GetService<IRabbitMQEventBus>();
-        foreach (var (registerType, handlerType, eventType, responseType) in responseHandlers)
+        foreach (var (handlerType, eventType) in RabbitmqEventBusHandlers.RegisterEventHandlers())
+        {
+            services.TryAddTransient(handlerType);
+        }
+        return services;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="app"></param>
+    public static void UseRabbitmqEventBus(this IApplicationBuilder app)
+    {
+        IRabbitMQEventBus rmqeV2 = app.ApplicationServices.GetRequiredService<IRabbitMQEventBus>();
+        var _logger = app.ApplicationServices.GetRequiredService<ILogger<DefaultRabbitMQEventBusV2>>();
+        foreach (var (registerType, handlerType, eventType, responseType) in RabbitmqEventBusHandlers.RegisterEventResponseHandlers())
         {
             rmqeV2.Subscribe(eventType, responseType);
             _logger.LogInformation($"subscribe:\t{eventType}\t=>\t{handlerType}<{eventType.Name},{responseType.Name}>\t return Type : \t{responseType}");
         }
-        foreach (Type mType in typeof(IEvent).GetAssemblies())
+        foreach (var (handlerType, eventType) in RabbitmqEventBusHandlers.RegisterEventHandlers())
         {
-            var handlesAny = typeof(IEventHandler<>).GetMakeGenericType(mType);
-            if (handlesAny.Any())
-            {
-                rmqeV2.Subscribe(mType);
-                foreach (var handler in handlesAny)
-                {
-                    _logger.LogInformation($"subscribe:{mType}\t=>\t{handler}\t");
-                }
-            }
+            rmqeV2.Subscribe(eventType);
+            _logger.LogInformation($"subscribe:\t{eventType}\t=>\t{handlerType}<{eventType.Name}>");
         }
-        return serviceProvider;
     }
 }
 
