@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using RabbitMQ.EventBus.AspNetCore.Events;
+using RabbitMQ.EventBus.AspNetCore.Simple.Controllers;
 using System;
 using System.Reflection;
 
@@ -28,6 +30,7 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
             services.AddHealthChecks();
 
 
+            //services.AddTransient<IEventHandler<MessageBody>, MessageBodyHandle>();
             services.AddRabbitMQEventBus("localhost", 5672, "guest", "guest", "", eventBusOptionAction: eventBusOption =>
             {
                 eventBusOption.ClientProvidedAssembly(assemblyName);
@@ -59,12 +62,13 @@ namespace RabbitMQ.EventBus.AspNetCore.Simple
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRabbitMQEventBus rabbitMQ)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseRabbitmqEventBus();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
